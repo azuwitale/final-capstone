@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: ./be
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+
+  frontend:
+    build: ./fe
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
-import { Activity, TrendingUp, BarChart3, AlertCircle, Users, Target, Award, Zap, ArrowUp, ArrowDown, Minus } from "lucide-react";
+import {
+  Activity,
+  TrendingUp,
+  BarChart3,
+  AlertCircle,
+  Users,
+  Target,
+  Award,
+  Zap,
+} from "lucide-react";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -86,7 +95,9 @@ export default function Dashboard() {
         <div className="bg-white p-12 rounded-3xl shadow-lg border border-gray-100 mb-8">
           <div className="flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-3 text-gray-600">Loading benchmark data...</span>
+            <span className="ml-3 text-gray-600">
+              Loading benchmark data...
+            </span>
           </div>
         </div>
       ) : benchmarkData ? (
@@ -98,11 +109,15 @@ export default function Dashboard() {
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Overall Average Benchmark</h2>
-                <p className="text-sm text-gray-600">Across all {benchmarkData.total_personas} personas</p>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Overall Average Benchmark
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Across all {benchmarkData.total_personas} personas
+                </p>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
                 <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -113,7 +128,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-sm text-gray-600">Avg Activities</div>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
                 <div className="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-7 h-7 text-purple-600" />
@@ -123,7 +138,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-sm text-gray-600">Avg Min/Module</div>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
                 <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Award className="w-7 h-7 text-green-600" />
@@ -133,13 +148,16 @@ export default function Dashboard() {
                 </div>
                 <div className="text-sm text-gray-600">Avg Consistency</div>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
                 <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <BarChart3 className="w-7 h-7 text-orange-600" />
                 </div>
                 <div className="text-3xl font-bold text-gray-800 mb-1">
-                  {(benchmarkData.overall_average.avg_weekend_ratio * 100).toFixed(0)}%
+                  {(
+                    benchmarkData.overall_average.avg_weekend_ratio * 100
+                  ).toFixed(0)}
+                  %
                 </div>
                 <div className="text-sm text-gray-600">Weekend Ratio</div>
               </div>
@@ -150,12 +168,14 @@ export default function Dashboard() {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
               <Target className="w-7 h-7 text-indigo-600" />
-              <h2 className="text-3xl font-bold text-gray-800">Benchmark by Persona</h2>
+              <h2 className="text-3xl font-bold text-gray-800">
+                Benchmark by Persona
+              </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {benchmarkData.benchmark_by_persona.map((persona) => (
-                <div 
+                <div
                   key={persona.cluster_id}
                   className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all"
                 >
@@ -164,42 +184,62 @@ export default function Dashboard() {
                       <Users className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-800 text-lg">{persona.persona}</h3>
-                      <span className="text-xs text-gray-500">Cluster {persona.cluster_id}</span>
+                      <h3 className="font-bold text-gray-800 text-lg">
+                        {persona.persona}
+                      </h3>
+                      <span className="text-xs text-gray-500">
+                        Cluster {persona.cluster_id}
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
                       <div className="flex items-center gap-2">
                         <Activity className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-gray-700">Activities</span>
+                        <span className="text-sm text-gray-700">
+                          Activities
+                        </span>
                       </div>
-                      <span className="font-bold text-blue-600">{persona.avg_activities}</span>
+                      <span className="font-bold text-blue-600">
+                        {persona.avg_activities}
+                      </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-purple-50 rounded-xl">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-purple-600" />
-                        <span className="text-sm text-gray-700">Minutes/Module</span>
+                        <span className="text-sm text-gray-700">
+                          Minutes/Module
+                        </span>
                       </div>
-                      <span className="font-bold text-purple-600">{persona.avg_minutes_per_module}m</span>
+                      <span className="font-bold text-purple-600">
+                        {persona.avg_minutes_per_module}m
+                      </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
                       <div className="flex items-center gap-2">
                         <Award className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-gray-700">Consistency</span>
+                        <span className="text-sm text-gray-700">
+                          Consistency
+                        </span>
                       </div>
-                      <span className="font-bold text-green-600">{persona.avg_consistency}/10</span>
+                      <span className="font-bold text-green-600">
+                        {persona.avg_consistency}/10
+                      </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-orange-50 rounded-xl">
                       <div className="flex items-center gap-2">
                         <BarChart3 className="w-4 h-4 text-orange-600" />
-                        <span className="text-sm text-gray-700">Weekend Ratio</span>
+                        <span className="text-sm text-gray-700">
+                          Weekend Ratio
+                        </span>
                       </div>
-                      <span className="font-bold text-orange-600">{(persona.avg_weekend_ratio * 100).toFixed(0)}%</span>
+                      <span className="font-bold text-orange-600">
+                        {(persona.avg_weekend_ratio * 100).toFixed(0)}%
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -213,35 +253,40 @@ export default function Dashboard() {
               <Target className="w-6 h-6 text-indigo-600" />
               How to Use These Benchmarks
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100">
                 <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-white font-bold text-lg">1</span>
                 </div>
-                <h4 className="font-bold text-gray-800 mb-2">Compare Your Stats</h4>
+                <h4 className="font-bold text-gray-800 mb-2">
+                  Compare Your Stats
+                </h4>
                 <p className="text-sm text-gray-600">
-                  Use these benchmarks to see how your learning metrics compare with different persona types
+                  Use these benchmarks to see how your learning metrics compare
+                  with different persona types
                 </p>
               </div>
-              
+
               <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
                 <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-white font-bold text-lg">2</span>
                 </div>
                 <h4 className="font-bold text-gray-800 mb-2">Set Your Goals</h4>
                 <p className="text-sm text-gray-600">
-                  Target the persona that matches your learning aspirations and work towards their benchmarks
+                  Target the persona that matches your learning aspirations and
+                  work towards their benchmarks
                 </p>
               </div>
-              
+
               <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
                 <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-white font-bold text-lg">3</span>
                 </div>
                 <h4 className="font-bold text-gray-800 mb-2">Track Progress</h4>
                 <p className="text-sm text-gray-600">
-                  Monitor how you're improving relative to these benchmarks over time
+                  Monitor how you're improving relative to these benchmarks over
+                  time
                 </p>
               </div>
             </div>

@@ -1,7 +1,28 @@
 import { useState, useEffect } from "react";
-import { AlertCircle, TrendingUp, Users, Lightbulb, Loader2, Sparkles, RefreshCw, Target, Clock, Activity, Award, CheckCircle, ArrowRight, Zap, Trophy, TrendingDown, Calendar, Brain, ArrowUp, ArrowDown, Minus } from "lucide-react";
+import {
+  AlertCircle,
+  TrendingUp,
+  Users,
+  Lightbulb,
+  Loader2,
+  Sparkles,
+  RefreshCw,
+  Target,
+  Clock,
+  Activity,
+  Award,
+  CheckCircle,
+  ArrowRight,
+  Zap,
+  Trophy,
+  Calendar,
+  Brain,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+} from "lucide-react";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export default function Analysis() {
   const [perfInput, setPerfInput] = useState({
@@ -53,13 +74,15 @@ export default function Analysis() {
     try {
       const response = await fetch(`${API_BASE_URL}/sample-data`);
       const data = await response.json();
-      
+
       setPerfInput(data.performance);
       setClusterInput(data.clustering);
-      
+
       setError(null);
     } catch (err) {
-      setError("Failed to load sample data. Please check if backend is running.");
+      setError(
+        "Failed to load sample data. Please check if backend is running."
+      );
     } finally {
       setLoadingSample(false);
     }
@@ -108,7 +131,9 @@ export default function Analysis() {
       setInsightData(insight);
       setComparisonData(comparison);
     } catch {
-      setError("Failed to connect to API. Please make sure the backend is running.");
+      setError(
+        "Failed to connect to API. Please make sure the backend is running."
+      );
     } finally {
       setLoading(false);
     }
@@ -116,13 +141,26 @@ export default function Analysis() {
 
   // Calculate progress percentages for visual indicators
   const getProgressData = () => {
-    if (!perfInput.consistency_score || !perfInput.total_activities) return null;
+    if (!perfInput.consistency_score || !perfInput.total_activities)
+      return null;
 
     return {
-      consistency: Math.min((Number(perfInput.consistency_score) / 10) * 100, 100),
-      activities: Math.min((Number(perfInput.total_activities) / 50) * 100, 100),
-      studyTime: Math.min((Number(perfInput.avg_minutes_per_module) / 60) * 100, 100),
-      activeDays: Math.min((Number(perfInput.total_active_days) / 30) * 100, 100),
+      consistency: Math.min(
+        (Number(perfInput.consistency_score) / 10) * 100,
+        100
+      ),
+      activities: Math.min(
+        (Number(perfInput.total_activities) / 50) * 100,
+        100
+      ),
+      studyTime: Math.min(
+        (Number(perfInput.avg_minutes_per_module) / 60) * 100,
+        100
+      ),
+      activeDays: Math.min(
+        (Number(perfInput.total_active_days) / 30) * 100,
+        100
+      ),
     };
   };
 
@@ -189,21 +227,23 @@ export default function Analysis() {
             <Target className="w-6 h-6 text-indigo-600" />
             Learning Progress Overview
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Consistency Score */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-blue-600" />
-                  <span className="font-semibold text-gray-800">Consistency Score</span>
+                  <span className="font-semibold text-gray-800">
+                    Consistency Score
+                  </span>
                 </div>
                 <span className="text-2xl font-bold text-blue-600">
                   {perfInput.consistency_score}/10
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progressData.consistency}%` }}
                 >
@@ -211,9 +251,11 @@ export default function Analysis() {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.consistency >= 80 ? "Excellent consistency! 🎯" : 
-                 progressData.consistency >= 50 ? "Good progress, keep it up! 💪" : 
-                 "Room for improvement 📈"}
+                {progressData.consistency >= 80
+                  ? "Excellent consistency! 🎯"
+                  : progressData.consistency >= 50
+                  ? "Good progress, keep it up! 💪"
+                  : "Room for improvement 📈"}
               </p>
             </div>
 
@@ -222,14 +264,16 @@ export default function Analysis() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-green-600" />
-                  <span className="font-semibold text-gray-800">Total Activities</span>
+                  <span className="font-semibold text-gray-800">
+                    Total Activities
+                  </span>
                 </div>
                 <span className="text-2xl font-bold text-green-600">
                   {perfInput.total_activities}
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progressData.activities}%` }}
                 >
@@ -237,9 +281,11 @@ export default function Analysis() {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.activities >= 80 ? "Highly active learner! 🚀" : 
-                 progressData.activities >= 50 ? "Good activity level! ⭐" : 
-                 "More practice recommended 📚"}
+                {progressData.activities >= 80
+                  ? "Highly active learner! 🚀"
+                  : progressData.activities >= 50
+                  ? "Good activity level! ⭐"
+                  : "More practice recommended 📚"}
               </p>
             </div>
 
@@ -248,14 +294,16 @@ export default function Analysis() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-purple-600" />
-                  <span className="font-semibold text-gray-800">Avg Minutes/Module</span>
+                  <span className="font-semibold text-gray-800">
+                    Avg Minutes/Module
+                  </span>
                 </div>
                 <span className="text-2xl font-bold text-purple-600">
                   {perfInput.avg_minutes_per_module}m
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-600 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progressData.studyTime}%` }}
                 >
@@ -263,9 +311,11 @@ export default function Analysis() {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.studyTime >= 80 ? "Deep learning approach! 🧠" : 
-                 progressData.studyTime >= 50 ? "Balanced study time ⚡" : 
-                 "Quick learner or needs more focus? 🤔"}
+                {progressData.studyTime >= 80
+                  ? "Deep learning approach! 🧠"
+                  : progressData.studyTime >= 50
+                  ? "Balanced study time ⚡"
+                  : "Quick learner or needs more focus? 🤔"}
               </p>
             </div>
 
@@ -274,14 +324,16 @@ export default function Analysis() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-orange-600" />
-                  <span className="font-semibold text-gray-800">Active Days</span>
+                  <span className="font-semibold text-gray-800">
+                    Active Days
+                  </span>
                 </div>
                 <span className="text-2xl font-bold text-orange-600">
                   {perfInput.total_active_days} days
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progressData.activeDays}%` }}
                 >
@@ -289,9 +341,11 @@ export default function Analysis() {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.activeDays >= 80 ? "Exceptional dedication! 🔥" : 
-                 progressData.activeDays >= 50 ? "Regular engagement! 👍" : 
-                 "Build a stronger habit! 💡"}
+                {progressData.activeDays >= 80
+                  ? "Exceptional dedication! 🔥"
+                  : progressData.activeDays >= 50
+                  ? "Regular engagement! 👍"
+                  : "Build a stronger habit! 💡"}
               </p>
             </div>
           </div>
@@ -305,7 +359,9 @@ export default function Analysis() {
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-blue-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800">Performance Features</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              Performance Features
+            </h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {Object.keys(perfInput).map((key) => (
@@ -332,7 +388,9 @@ export default function Analysis() {
             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
               <Users className="w-5 h-5 text-purple-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800">Clustering Features</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              Clustering Features
+            </h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {Object.keys(clusterInput).map((key) => (
@@ -376,8 +434,10 @@ export default function Analysis() {
       {/* RESULT CARDS */}
       {performanceData && personaData && insightData && (
         <div className="mt-12 space-y-6">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Analysis Results</h2>
-          
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            Analysis Results
+          </h2>
+
           {/* STRAVA-STYLE INSIGHT CARDS */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {/* Card 1: Performance Intelligence */}
@@ -386,32 +446,40 @@ export default function Analysis() {
                 <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">Performance Intelligence</h3>
+                <h3 className="text-lg font-bold text-gray-800">
+                  Performance Intelligence
+                </h3>
               </div>
-              
+
               <p className="text-gray-700 mb-4 leading-relaxed">
-                {performanceData.predicted_performance > 3.5 
+                {performanceData.predicted_performance > 3.5
                   ? "Outstanding performance with consistent high-quality learning patterns. You're excelling across all metrics."
                   : performanceData.predicted_performance > 2.5
                   ? "Solid performance showing good learning habits. There's room to push yourself to the next level."
                   : "Your learning journey is just beginning. Focus on building consistent study habits for better results."}
               </p>
-              
+
               <div className="bg-white rounded-2xl p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-600">Performance Score</span>
+                  <span className="text-sm text-gray-600">
+                    Performance Score
+                  </span>
                   <span className="text-2xl font-bold text-blue-600">
                     {performanceData.predicted_performance.toFixed(2)}
                   </span>
                 </div>
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000"
-                    style={{ width: `${(performanceData.predicted_performance / 5) * 100}%` }}
+                    style={{
+                      width: `${
+                        (performanceData.predicted_performance / 5) * 100
+                      }%`,
+                    }}
                   ></div>
                 </div>
               </div>
-              
+
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors group-hover:shadow-lg">
                 View Details
               </button>
@@ -423,9 +491,11 @@ export default function Analysis() {
                 <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">Learner Persona</h3>
+                <h3 className="text-lg font-bold text-gray-800">
+                  Learner Persona
+                </h3>
               </div>
-              
+
               <div className="mb-4">
                 <div className="bg-white rounded-2xl p-4 mb-3">
                   <div className="text-3xl font-extrabold text-emerald-600 mb-2">
@@ -435,9 +505,9 @@ export default function Analysis() {
                     Cluster ID: {personaData.cluster}
                   </div>
                 </div>
-                
+
                 <p className="text-gray-700 leading-relaxed">
-                  {personaData.persona === "The Consistent" 
+                  {personaData.persona === "The Consistent"
                     ? "You demonstrate remarkable consistency in your learning patterns, building a solid foundation through regular practice."
                     : personaData.persona === "The Sprinter"
                     ? "You're a fast learner who quickly grasps new concepts. Your speed is impressive, focus on depth for even better results."
@@ -446,7 +516,7 @@ export default function Analysis() {
                     : "Your unique learning style shows potential for growth across multiple dimensions."}
                 </p>
               </div>
-              
+
               <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition-colors group-hover:shadow-lg">
                 Explore Persona
               </button>
@@ -460,28 +530,63 @@ export default function Analysis() {
                 </div>
                 <h3 className="text-lg font-bold text-gray-800">Key Insight</h3>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-4 mb-4">
                 <p className="text-gray-700 font-medium leading-relaxed">
-                  {insightData.insights?.performance_based || "No insights available"}
+                  {insightData.insights?.performance_based ||
+                    "No insights available"}
                 </p>
               </div>
-              
+
               <div className="space-y-2 mb-4">
                 {perfInput.consistency_score && (
                   <div className="flex items-center gap-2 text-sm">
-                    <div className={`w-2 h-2 rounded-full ${Number(perfInput.consistency_score) >= 7 ? 'bg-green-500' : Number(perfInput.consistency_score) >= 4 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-                    <span className="text-gray-600">Consistency: <span className="font-semibold">{Number(perfInput.consistency_score) >= 7 ? 'Strong' : Number(perfInput.consistency_score) >= 4 ? 'Moderate' : 'Needs Work'}</span></span>
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        Number(perfInput.consistency_score) >= 7
+                          ? "bg-green-500"
+                          : Number(perfInput.consistency_score) >= 4
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                    ></div>
+                    <span className="text-gray-600">
+                      Consistency:{" "}
+                      <span className="font-semibold">
+                        {Number(perfInput.consistency_score) >= 7
+                          ? "Strong"
+                          : Number(perfInput.consistency_score) >= 4
+                          ? "Moderate"
+                          : "Needs Work"}
+                      </span>
+                    </span>
                   </div>
                 )}
                 {perfInput.total_activities && (
                   <div className="flex items-center gap-2 text-sm">
-                    <div className={`w-2 h-2 rounded-full ${Number(perfInput.total_activities) >= 35 ? 'bg-green-500' : Number(perfInput.total_activities) >= 20 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-                    <span className="text-gray-600">Activity Level: <span className="font-semibold">{Number(perfInput.total_activities) >= 35 ? 'High' : Number(perfInput.total_activities) >= 20 ? 'Medium' : 'Low'}</span></span>
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        Number(perfInput.total_activities) >= 35
+                          ? "bg-green-500"
+                          : Number(perfInput.total_activities) >= 20
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                    ></div>
+                    <span className="text-gray-600">
+                      Activity Level:{" "}
+                      <span className="font-semibold">
+                        {Number(perfInput.total_activities) >= 35
+                          ? "High"
+                          : Number(perfInput.total_activities) >= 20
+                          ? "Medium"
+                          : "Low"}
+                      </span>
+                    </span>
                   </div>
                 )}
               </div>
-              
+
               <button className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-xl transition-colors group-hover:shadow-lg">
                 Deep Dive
               </button>
@@ -494,79 +599,101 @@ export default function Analysis() {
               <Trophy className="w-6 h-6 text-yellow-600" />
               Your Learning Stats
             </h3>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Activity className="w-8 h-8 text-blue-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-800 mb-1">{perfInput.total_activities}</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {perfInput.total_activities}
+                </div>
                 <div className="text-sm text-gray-600">Total Activities</div>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Clock className="w-8 h-8 text-purple-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-800 mb-1">{perfInput.avg_minutes_per_module}</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {perfInput.avg_minutes_per_module}
+                </div>
                 <div className="text-sm text-gray-600">Avg Min/Module</div>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Award className="w-8 h-8 text-green-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-800 mb-1">{perfInput.consistency_score}/10</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {perfInput.consistency_score}/10
+                </div>
                 <div className="text-sm text-gray-600">Consistency</div>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Calendar className="w-8 h-8 text-orange-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-800 mb-1">{perfInput.total_active_days}</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {perfInput.total_active_days}
+                </div>
                 <div className="text-sm text-gray-600">Active Days</div>
               </div>
             </div>
           </div>
 
           {/* Persona Insights - Updated Style */}
-          {insightData.insights?.persona_based && Array.isArray(insightData.insights.persona_based) && (
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-3xl shadow-lg border-2 border-indigo-200">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-indigo-600" />
-                Personalized Insights
-              </h3>
-              <div className="space-y-4">
-                {insightData.insights.persona_based.map((insight, index) => (
-                  <div key={index} className="bg-white rounded-2xl p-5 border border-indigo-100 hover:shadow-md transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-lg shadow-lg">
-                        {index + 1}
+          {insightData.insights?.persona_based &&
+            Array.isArray(insightData.insights.persona_based) && (
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-3xl shadow-lg border-2 border-indigo-200">
+                <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-indigo-600" />
+                  Personalized Insights
+                </h3>
+                <div className="space-y-4">
+                  {insightData.insights.persona_based.map((insight, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-2xl p-5 border border-indigo-100 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-lg shadow-lg">
+                          {index + 1}
+                        </div>
+                        <p className="text-gray-700 font-medium pt-2 flex-1">
+                          {insight}
+                        </p>
                       </div>
-                      <p className="text-gray-700 font-medium pt-2 flex-1">{insight}</p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* COMPARISON WITH BENCHMARKS */}
           {comparisonData && (
             <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
               <div className="flex items-center gap-3 mb-6">
                 <Trophy className="w-7 h-7 text-yellow-600" />
-                <h3 className="text-2xl font-bold text-gray-800">Performance Comparison</h3>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Performance Comparison
+                </h3>
               </div>
-              
+
               {/* Percentile Score */}
               <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white mb-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm opacity-90 mb-1">Your Percentile Rank</p>
-                    <p className="text-5xl font-extrabold mb-2">{comparisonData.percentile}%</p>
-                    <p className="text-lg font-semibold opacity-95">{comparisonData.performance_level}</p>
+                    <p className="text-sm opacity-90 mb-1">
+                      Your Percentile Rank
+                    </p>
+                    <p className="text-5xl font-extrabold mb-2">
+                      {comparisonData.percentile}%
+                    </p>
+                    <p className="text-lg font-semibold opacity-95">
+                      {comparisonData.performance_level}
+                    </p>
                   </div>
                   <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                     <Trophy className="w-12 h-12" />
@@ -575,25 +702,37 @@ export default function Analysis() {
               </div>
 
               {/* Comparison Insights */}
-              {comparisonData.comparison_insights && comparisonData.comparison_insights.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="font-bold text-gray-800 mb-4">Quick Insights</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {comparisonData.comparison_insights.map((insight, index) => (
-                      <div key={index} className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <CheckCircle className="w-5 h-5 text-white" />
-                        </div>
-                        <p className="text-sm text-gray-700 font-medium">{insight}</p>
-                      </div>
-                    ))}
+              {comparisonData.comparison_insights &&
+                comparisonData.comparison_insights.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="font-bold text-gray-800 mb-4">
+                      Quick Insights
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {comparisonData.comparison_insights.map(
+                        (insight, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100"
+                          >
+                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <CheckCircle className="w-5 h-5 text-white" />
+                            </div>
+                            <p className="text-sm text-gray-700 font-medium">
+                              {insight}
+                            </p>
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Comparison with Each Persona */}
               <div>
-                <h4 className="font-bold text-gray-800 mb-4">Comparison vs Each Persona</h4>
+                <h4 className="font-bold text-gray-800 mb-4">
+                  Comparison vs Each Persona
+                </h4>
                 <div className="space-y-3">
                   {comparisonData.benchmark_comparison.map((bench, index) => {
                     const userScore = comparisonData.user_performance;
@@ -601,44 +740,61 @@ export default function Analysis() {
                     const difference = bench.difference;
                     const isHigher = difference > 0;
                     const isEqual = Math.abs(difference) < 0.1;
-                    
+
                     // Calculate percentage difference for better understanding
-                    const percentDiff = benchScore !== 0 ? ((difference / benchScore) * 100) : 0;
-                    
+                    const percentDiff =
+                      benchScore !== 0 ? (difference / benchScore) * 100 : 0;
+
                     return (
-                      <div key={index} className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors">
+                      <div
+                        key={index}
+                        className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-colors"
+                      >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
                               <Users className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                              <p className="font-bold text-gray-800">{bench.persona}</p>
-                              <p className="text-xs text-gray-500">Benchmark Score: {benchScore.toFixed(2)}</p>
+                              <p className="font-bold text-gray-800">
+                                {bench.persona}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Benchmark Score: {benchScore.toFixed(2)}
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="text-right">
-                            <p className="text-xs text-gray-500 mb-1">Your Score</p>
-                            <p className="text-xl font-bold text-gray-800">{userScore.toFixed(2)}</p>
+                            <p className="text-xs text-gray-500 mb-1">
+                              Your Score
+                            </p>
+                            <p className="text-xl font-bold text-gray-800">
+                              {userScore.toFixed(2)}
+                            </p>
                           </div>
                         </div>
-                        
+
                         {/* Visual Status */}
                         <div className="flex items-center justify-between">
                           {isEqual ? (
                             <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl flex-1">
                               <Minus className="w-5 h-5 text-gray-500" />
-                              <span className="font-semibold text-gray-700">Setara dengan benchmark</span>
+                              <span className="font-semibold text-gray-700">
+                                Setara dengan benchmark
+                              </span>
                             </div>
                           ) : isHigher ? (
                             <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl flex-1 border border-green-200">
                               <ArrowUp className="w-5 h-5 text-green-600" />
                               <div className="flex-1">
                                 <span className="font-semibold text-green-700">
-                                  Lebih tinggi {Math.abs(percentDiff).toFixed(0)}%
+                                  Lebih tinggi{" "}
+                                  {Math.abs(percentDiff).toFixed(0)}%
                                 </span>
-                                <p className="text-xs text-green-600">Kamu lebih baik dari {bench.persona}!</p>
+                                <p className="text-xs text-green-600">
+                                  Kamu lebih baik dari {bench.persona}!
+                                </p>
                               </div>
                             </div>
                           ) : (
@@ -646,9 +802,12 @@ export default function Analysis() {
                               <ArrowDown className="w-5 h-5 text-blue-600" />
                               <div className="flex-1">
                                 <span className="font-semibold text-blue-700">
-                                  Masih {Math.abs(percentDiff).toFixed(0)}% di bawah
+                                  Masih {Math.abs(percentDiff).toFixed(0)}% di
+                                  bawah
                                 </span>
-                                <p className="text-xs text-blue-600">Ikuti rekomendasi untuk mencapai level ini</p>
+                                <p className="text-xs text-blue-600">
+                                  Ikuti rekomendasi untuk mencapai level ini
+                                </p>
                               </div>
                             </div>
                           )}
@@ -664,8 +823,12 @@ export default function Analysis() {
                 <div className="flex items-center gap-3">
                   <Award className="w-8 h-8 text-yellow-600" />
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Your Performance Level</p>
-                    <p className="text-2xl font-bold text-gray-800">{comparisonData.performance_level}</p>
+                    <p className="text-sm text-gray-600 mb-1">
+                      Your Performance Level
+                    </p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {comparisonData.performance_level}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -673,98 +836,127 @@ export default function Analysis() {
           )}
 
           {/* ACTIONABLE RECOMMENDATIONS */}
-          {insightData.recommendations && insightData.recommendations.length > 0 && (
-            <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <Zap className="w-7 h-7 text-yellow-600" />
-                <h3 className="text-2xl font-bold text-gray-800">Rekomendasi Actionable</h3>
-              </div>
-              <p className="text-gray-600 mb-6">
-                Ikuti rekomendasi di bawah untuk meningkatkan performa belajar kamu
-              </p>
-              
-              <div className="space-y-4">
-                {insightData.recommendations.map((rec, index) => {
-                  const priorityColors = {
-                    high: "from-red-50 to-orange-50 border-red-200",
-                    medium: "from-yellow-50 to-amber-50 border-yellow-200",
-                    low: "from-green-50 to-emerald-50 border-green-200"
-                  };
-                  
-                  const priorityBadgeColors = {
-                    high: "bg-red-100 text-red-700",
-                    medium: "bg-yellow-100 text-yellow-700",
-                    low: "bg-green-100 text-green-700"
-                  };
-                  
-                  const categoryIcons = {
-                    "Consistency": <Award className="w-5 h-5" />,
-                    "Activity": <Activity className="w-5 h-5" />,
-                    "Study Time": <Clock className="w-5 h-5" />,
-                    "Schedule": <Target className="w-5 h-5" />,
-                    "Persona": <Users className="w-5 h-5" />,
-                    "Overall": <TrendingUp className="w-5 h-5" />
-                  };
-
-                  return (
-                    <div 
-                      key={index} 
-                      className={`bg-gradient-to-r ${priorityColors[rec.priority]} border-2 rounded-2xl p-6 hover:shadow-lg transition-all`}
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
-                            {categoryIcons[rec.category] || <Lightbulb className="w-5 h-5" />}
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-800">{rec.title}</h4>
-                            <span className="text-xs text-gray-500">{rec.category}</span>
-                          </div>
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${priorityBadgeColors[rec.priority]}`}>
-                          {rec.priority === 'high' ? '🔥 High Priority' : 
-                           rec.priority === 'medium' ? '⚡ Medium' : 
-                           '✅ Low Priority'}
-                        </span>
-                      </div>
-                      
-                      <p className="text-gray-700 mb-4">{rec.description}</p>
-                      
-                      <div className="bg-white/60 rounded-xl p-4 mb-3 border border-gray-200">
-                        <div className="flex items-start gap-2">
-                          <ArrowRight className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="font-semibold text-gray-800 mb-1">Action Plan:</p>
-                            <p className="text-gray-700">{rec.action}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                        <span className="text-gray-600">
-                          <span className="font-semibold text-gray-800">Expected Impact:</span> {rec.expected_impact}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* Summary */}
-              <div className="mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-2xl">
-                <div className="flex items-center gap-3 mb-3">
-                  <Sparkles className="w-6 h-6" />
-                  <h4 className="text-lg font-bold">Quick Summary</h4>
+          {insightData.recommendations &&
+            insightData.recommendations.length > 0 && (
+              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <Zap className="w-7 h-7 text-yellow-600" />
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    Rekomendasi Actionable
+                  </h3>
                 </div>
-                <p className="text-sm opacity-90">
-                  Kamu mendapat {insightData.recommendations.length} rekomendasi personalized. 
-                  Fokus pada {insightData.recommendations.filter(r => r.priority === 'high').length} rekomendasi prioritas tinggi 
-                  untuk hasil maksimal dalam 2-4 minggu ke depan! 🚀
+                <p className="text-gray-600 mb-6">
+                  Ikuti rekomendasi di bawah untuk meningkatkan performa belajar
+                  kamu
                 </p>
+
+                <div className="space-y-4">
+                  {insightData.recommendations.map((rec, index) => {
+                    const priorityColors = {
+                      high: "from-red-50 to-orange-50 border-red-200",
+                      medium: "from-yellow-50 to-amber-50 border-yellow-200",
+                      low: "from-green-50 to-emerald-50 border-green-200",
+                    };
+
+                    const priorityBadgeColors = {
+                      high: "bg-red-100 text-red-700",
+                      medium: "bg-yellow-100 text-yellow-700",
+                      low: "bg-green-100 text-green-700",
+                    };
+
+                    const categoryIcons = {
+                      Consistency: <Award className="w-5 h-5" />,
+                      Activity: <Activity className="w-5 h-5" />,
+                      "Study Time": <Clock className="w-5 h-5" />,
+                      Schedule: <Target className="w-5 h-5" />,
+                      Persona: <Users className="w-5 h-5" />,
+                      Overall: <TrendingUp className="w-5 h-5" />,
+                    };
+
+                    return (
+                      <div
+                        key={index}
+                        className={`bg-gradient-to-r ${
+                          priorityColors[rec.priority]
+                        } border-2 rounded-2xl p-6 hover:shadow-lg transition-all`}
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm">
+                              {categoryIcons[rec.category] || (
+                                <Lightbulb className="w-5 h-5" />
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-gray-800">
+                                {rec.title}
+                              </h4>
+                              <span className="text-xs text-gray-500">
+                                {rec.category}
+                              </span>
+                            </div>
+                          </div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              priorityBadgeColors[rec.priority]
+                            }`}
+                          >
+                            {rec.priority === "high"
+                              ? "🔥 High Priority"
+                              : rec.priority === "medium"
+                              ? "⚡ Medium"
+                              : "✅ Low Priority"}
+                          </span>
+                        </div>
+
+                        <p className="text-gray-700 mb-4">{rec.description}</p>
+
+                        <div className="bg-white/60 rounded-xl p-4 mb-3 border border-gray-200">
+                          <div className="flex items-start gap-2">
+                            <ArrowRight className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-gray-800 mb-1">
+                                Action Plan:
+                              </p>
+                              <p className="text-gray-700">{rec.action}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          <span className="text-gray-600">
+                            <span className="font-semibold text-gray-800">
+                              Expected Impact:
+                            </span>{" "}
+                            {rec.expected_impact}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Summary */}
+                <div className="mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Sparkles className="w-6 h-6" />
+                    <h4 className="text-lg font-bold">Quick Summary</h4>
+                  </div>
+                  <p className="text-sm opacity-90">
+                    Kamu mendapat {insightData.recommendations.length}{" "}
+                    rekomendasi personalized. Fokus pada{" "}
+                    {
+                      insightData.recommendations.filter(
+                        (r) => r.priority === "high"
+                      ).length
+                    }{" "}
+                    rekomendasi prioritas tinggi untuk hasil maksimal dalam 2-4
+                    minggu ke depan! 🚀
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       )}
     </div>

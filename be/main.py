@@ -11,7 +11,7 @@ from schema.user_features import (
 )
 
 app = FastAPI(
-    title="AI Learning Insight API",
+    title="Persona Flow Insight API",
     version="1.0.0"
 )
 

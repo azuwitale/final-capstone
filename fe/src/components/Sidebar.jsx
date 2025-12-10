@@ -10,10 +10,12 @@ export default function Sidebar() {
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            AI Dashboard
+            Persona Flow
           </h2>
         </div>
-        <p className="text-sm text-gray-500 ml-13">Intelligent Learning Analytics</p>
+        <p className="text-sm text-gray-500 ml-13">
+          Intelligent Learning Analytics
+        </p>
       </div>
 
       <nav className="flex flex-col gap-3">
@@ -63,9 +65,13 @@ export default function Sidebar() {
       <div className="mt-auto pt-6 border-t border-gray-100">
         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-2xl border border-indigo-100">
           <p className="text-sm font-semibold text-gray-800 mb-1">Need Help?</p>
-          <p className="text-xs text-gray-600">Contact support for assistance</p>
+          <p className="text-xs text-gray-600">
+            Contact support for assistance
+          </p>
         </div>
-        <p className="text-xs text-gray-400 mt-4 text-center">© 2025 AI System</p>
+        <p className="text-xs text-gray-400 mt-4 text-center">
+          © 2025 AI System
+        </p>
       </div>
     </aside>
   );
