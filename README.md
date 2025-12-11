@@ -1,3 +1,6 @@
+Team ID : A25-CS218
+Project Name : Persona Flow
+
 # Persona Flow
 
 Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan rekomendasi untuk meningkatkan performa belajar.
@@ -64,7 +67,13 @@ Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan 
 3. **Jalankan server**
 
    ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+   atau menggunakan uv:
+
+   ```bash
+   uv
    ```
 
 4. **API akan tersedia di**: `http://localhost:8000`
