@@ -73,7 +73,7 @@ Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan 
    atau menggunakan uv:
 
    ```bash
-   uv
+   uv run uvicorn main:app --host 0.0.0.0 --port 8000
    ```
 
 4. **API akan tersedia di**: `http://localhost:8000`
