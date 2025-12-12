@@ -311,25 +311,63 @@ async def get_persona_samples():
         for cluster_id, centroid in enumerate(centroids):
             persona_label = persona_mapping.get(str(cluster_id), "Unknown")
             
-            # Ensure all values are positive
-            sample = {
-                "cluster_id": cluster_id,
-                "persona_label": persona_label,
-                "performance": {
-                    "avg_minutes_per_module": max(round(centroid[1], 2), 1),
-                    "consistency_score": max(round(centroid[2], 2), 1),
-                    "total_activities": max(round(centroid[0], 2), 1),
-                    "weekend_ratio": max(round(centroid[3], 2), 0.01),
-                    "study_time_category": 2,
-                    "total_active_days": 15,
-                },
-                "clustering": {
-                    "total_activities": max(round(centroid[0], 2), 1),
-                    "avg_minutes_per_module": max(round(centroid[1], 2), 1),
-                    "consistency_score": max(round(centroid[2], 2), 1),
-                    "weekend_ratio": max(round(centroid[3], 2), 0.01),
+            if cluster_id == 0:  # The Consistent
+                sample = {
+                    "cluster_id": cluster_id,
+                    "persona_label": persona_label,
+                    "performance": {
+                        "avg_minutes_per_module": 1.07,
+                        "consistency_score": 1.14,
+                        "total_activities": -0.83,
+                        "weekend_ratio": 0.01,
+                        "study_time_category": 2,
+                        "total_active_days": 15,
+                    },
+                    "clustering": {
+                        "total_activities": 1.07,
+                        "avg_minutes_per_module": -0.83,
+                        "consistency_score": 1.14,
+                        "weekend_ratio": 0.01,
+                    }
                 }
-            }
+            elif cluster_id == 1:  # The Sprinter
+                sample = {
+                    "cluster_id": cluster_id,
+                    "persona_label": persona_label,
+                    "performance": {
+                        "avg_minutes_per_module": 0.4,
+                        "consistency_score": -0.45,
+                        "total_activities": -0.4,
+                        "weekend_ratio": 0.94,
+                        "study_time_category": 2,
+                        "total_active_days": 15,
+                    },
+                    "clustering": {
+                        "total_activities": -0.4,
+                        "avg_minutes_per_module": 0.4,
+                        "consistency_score": -0.45,
+                        "weekend_ratio": 0.94,
+                    }
+                }
+            else:  # The Warrior (cluster_id == 2)
+                sample = {
+                    "cluster_id": cluster_id,
+                    "persona_label": persona_label,
+                    "performance": {
+                        "avg_minutes_per_module": 0.28,
+                        "consistency_score": -0.47,
+                        "total_activities": -0.45,
+                        "weekend_ratio": -0.83,
+                        "study_time_category": 2,
+                        "total_active_days": 15,
+                    },
+                    "clustering": {
+                        "total_activities": -0.45,
+                        "avg_minutes_per_module": 0.28,
+                        "consistency_score": -0.47,
+                        "weekend_ratio": -0.83,
+                    }
+                }
             samples.append(sample)
         
         return {

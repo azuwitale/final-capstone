@@ -1,4 +1,6 @@
-Team ID : A25-CS218
+# Casptone Project
+
+Team ID : A25-CS218<br>
 Project Name : Persona Flow
 
 # Persona Flow
@@ -20,7 +22,11 @@ Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan 
 
 ### Prerequisites
 
-- Docker & Docker Compose
+- Docker & Docker Compose(Jika ingin Menggunakan Docker)
+- Git (untuk clone repository)
+- Python 3.10+
+- Pip / UV (package manager untuk backend)
+- Node.js 18+ & NPM (untuk frontend)
 
 ### Jalankan Aplikasi Pake Docker
 
