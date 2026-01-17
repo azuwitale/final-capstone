@@ -623,23 +623,23 @@ async def compare_performance(features: PerformanceFeatures):
         # Compare activities
         avg_activities = sum([c[0] for c in centroids]) / len(centroids)
         if user_data["total_activities"] > avg_activities * 1.2:
-            comparison_insights.append("📊 Kamu 20% lebih aktif dari rata-rata learner!")
+            comparison_insights.append(" Kamu 20% lebih aktif dari rata-rata learner!")
         elif user_data["total_activities"] < avg_activities * 0.8:
-            comparison_insights.append("📊 Tingkatkan aktivitas belajar untuk mencapai level rata-rata")
+            comparison_insights.append(" Tingkatkan aktivitas belajar untuk mencapai level rata-rata")
         
         # Compare consistency
         avg_consistency = sum([c[2] for c in centroids]) / len(centroids)
         if user_data["consistency_score"] > avg_consistency * 1.2:
-            comparison_insights.append("⭐ Konsistensi kamu 20% lebih baik dari average!")
+            comparison_insights.append(" Konsistensi kamu 20% lebih baik dari average!")
         elif user_data["consistency_score"] < avg_consistency * 0.8:
-            comparison_insights.append("⭐ Fokus pada konsistensi untuk hasil lebih optimal")
+            comparison_insights.append(" Fokus pada konsistensi untuk hasil lebih optimal")
         
         # Compare study time
         avg_time = sum([c[1] for c in centroids]) / len(centroids)
         if user_data["avg_minutes_per_module"] > avg_time * 1.2:
-            comparison_insights.append("⏱️ Waktu belajar kamu lebih mendalam dari rata-rata")
+            comparison_insights.append(" Waktu belajar kamu lebih mendalam dari rata-rata")
         elif user_data["avg_minutes_per_module"] < avg_time * 0.8:
-            comparison_insights.append("⏱️ Pertimbangkan menambah durasi per modul")
+            comparison_insights.append(" Pertimbangkan menambah durasi per modul")
         
         return {
             "user_performance": round(user_perf, 2),
