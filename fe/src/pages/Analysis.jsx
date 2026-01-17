@@ -211,8 +211,8 @@ export default function Analysis() {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.consistency >= 80 ? "Excellent consistency! 🎯" : 
-                 progressData.consistency >= 50 ? "Good progress, keep it up! 💪" : 
+                {progressData.consistency >= 80 ? "Excellent consistency! " : 
+                 progressData.consistency >= 50 ? "Good progress, keep it up!" : 
                  "Room for improvement 📈"}
               </p>
             </div>
