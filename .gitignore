@@ -1,3 +1,6 @@
 fe/node_modules/*
 
 be/.venv/*
+
+__pycache__/
+*.pyc
