@@ -10,6 +10,78 @@ from schema.user_features import (
     PersonaPrediction
 )
 
+# --------------------
+# UTILITY FUNCTIONS FOR DATA TRANSFORMATION
+# --------------------
+def transform_zscore_to_readable(zscore_value, feature_name):
+    """
+    Ubah z-score values ke value yang gampang dibaca
+    """
+    feature_ranges = {
+        "total_activities": {"mean": 30, "std": 10, "min": 5, "max": 60, "type": "int"},
+        "avg_minutes_per_module": {"mean": 20, "std": 8, "min": 5, "max": 45, "type": "float"},
+        "consistency_score": {"mean": 6, "std": 2, "min": 1, "max": 10, "type": "float"},
+        "weekend_ratio": {"mean": 0.3, "std": 0.2, "min": 0.0, "max": 1.0, "type": "float"}
+    }
+    
+    if feature_name not in feature_ranges:
+        return round(zscore_value, 2)
+    
+    range_info = feature_ranges[feature_name]
+    
+    readable_value = range_info["mean"] + (zscore_value * range_info["std"])
+    readable_value = max(range_info["min"], min(range_info["max"], readable_value))
+    
+    if range_info["type"] == "int":
+        return int(round(readable_value))
+    
+    return round(readable_value, 2)
+
+def transform_readable_to_zscore(readable_value, feature_name):
+    """
+    Ubah Value Dari User ke z-score buat input model
+    """
+    feature_ranges = {
+        "total_activities": {"mean": 30, "std": 10},
+        "avg_minutes_per_module": {"mean": 20, "std": 8},
+        "consistency_score": {"mean": 6, "std": 2},
+        "weekend_ratio": {"mean": 0.3, "std": 0.2}
+    }
+    
+    if feature_name not in feature_ranges:
+        return readable_value
+    
+    range_info = feature_ranges[feature_name]
+    
+    # Convert readable value to z-score: zscore = (value - mean) / std
+    zscore = (readable_value - range_info["mean"]) / range_info["std"]
+    
+    return zscore
+
+
+def transform_centroid_to_readable(centroid):
+    """
+    Transform a full centroid (z-scores) to readable values
+    """
+    feature_names = ["total_activities", "avg_minutes_per_module", "consistency_score", "weekend_ratio"]
+    
+    readable_centroid = {}
+    for i, feature_name in enumerate(feature_names):
+        readable_centroid[feature_name] = transform_zscore_to_readable(centroid[i], feature_name)
+    
+    return readable_centroid
+
+
+def transform_readable_features_to_zscore(features_dict):
+    """
+    Ubah readable feature dict ke z-scores buat model input
+    """
+    zscore_features = {}
+    for feature_name, value in features_dict.items():
+        zscore_features[feature_name] = transform_readable_to_zscore(value, feature_name)
+    
+    return zscore_features
+
 app = FastAPI(
     title="Persona Flow Insight API",
     version="1.0.0"
@@ -39,7 +111,7 @@ try:
 except Exception as e:
     raise RuntimeError(f"Failed to load models: {str(e)}")
 
-# Ensure correct order for performance ML model
+# Buat Urutin Inputan ke performance ML model
 PERFORMANCE_ORDER = [
     "total_activities",
     "avg_minutes_per_module",
@@ -49,7 +121,7 @@ PERFORMANCE_ORDER = [
     "total_active_days",
 ]
 
-# Ensure correct order for clustering model/scaler
+#  Buat Urutin Inputan ke clustering model/scaler
 CLUSTER_ORDER = [
     "total_activities",
     "avg_minutes_per_module",
@@ -69,7 +141,7 @@ def generate_recommendations(perf_dict: dict, cluster_dict: dict, perf_pred: flo
     
     # 1. Consistency-based recommendations
     consistency = float(perf_dict.get("consistency_score", 0))
-    if consistency < 5:
+    if consistency < 4:
         recommendations.append({
             "category": "Consistency",
             "priority": "high",
@@ -266,23 +338,26 @@ async def get_sample_data():
     Return sample data untuk auto-fill di frontend
     """
     try:
-        # Get centroids from KMeans model
+        # Ambil Dari KMeans model
         centroids = kmeans_model.cluster_centers_
         
-        # Use first centroid as default sample - ensure all positive values
+        # Ubah Biar Gampang di baca menusa
+        centroids = kmeans_model.cluster_centers_
+        readable_centroid = transform_centroid_to_readable(centroids[0])
+        
         sample_cluster = {
-            "total_activities": max(round(float(centroids[0][0]), 2), 1),  # minimum 1
-            "avg_minutes_per_module": max(round(float(centroids[0][1]), 2), 1),  # minimum 1
-            "consistency_score": max(round(float(centroids[0][2]), 2), 1),  # minimum 1
-            "weekend_ratio": max(round(float(centroids[0][3]), 2), 0.01),  # minimum 0.01
+            "total_activities": readable_centroid["total_activities"],
+            "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
+            "consistency_score": readable_centroid["consistency_score"],
+            "weekend_ratio": readable_centroid["weekend_ratio"],
         }
         
-        # Sample performance data - ensure all positive values
+        # Sample performance data pake value yang gampang dibaca
         sample_performance = {
-            "avg_minutes_per_module": max(round(float(centroids[0][1]), 2), 1),
-            "consistency_score": max(round(float(centroids[0][2]), 2), 1),
-            "total_activities": max(round(float(centroids[0][0]), 2), 1),
-            "weekend_ratio": max(round(float(centroids[0][3]), 2), 0.01),
+            "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
+            "consistency_score": readable_centroid["consistency_score"],
+            "total_activities": readable_centroid["total_activities"],
+            "weekend_ratio": readable_centroid["weekend_ratio"],
             "study_time_category": 2,
             "total_active_days": 15,
         }
@@ -311,63 +386,27 @@ async def get_persona_samples():
         for cluster_id, centroid in enumerate(centroids):
             persona_label = persona_mapping.get(str(cluster_id), "Unknown")
             
-            if cluster_id == 0:  # The Consistent
-                sample = {
-                    "cluster_id": cluster_id,
-                    "persona_label": persona_label,
-                    "performance": {
-                        "avg_minutes_per_module": 1.07,
-                        "consistency_score": 1.14,
-                        "total_activities": -0.83,
-                        "weekend_ratio": 0.01,
-                        "study_time_category": 2,
-                        "total_active_days": 15,
-                    },
-                    "clustering": {
-                        "total_activities": 1.07,
-                        "avg_minutes_per_module": -0.83,
-                        "consistency_score": 1.14,
-                        "weekend_ratio": 0.01,
-                    }
+            # Ubah z-scores ke value yang gampang dibaca
+            readable_centroid = transform_centroid_to_readable(centroid)
+            
+            sample = {
+                "cluster_id": cluster_id,
+                "persona_label": persona_label,
+                "performance": {
+                    "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
+                    "consistency_score": readable_centroid["consistency_score"],
+                    "total_activities": readable_centroid["total_activities"],
+                    "weekend_ratio": readable_centroid["weekend_ratio"],
+                    "study_time_category": 2,
+                    "total_active_days": 15,
+                },
+                "clustering": {
+                    "total_activities": readable_centroid["total_activities"],
+                    "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
+                    "consistency_score": readable_centroid["consistency_score"],
+                    "weekend_ratio": readable_centroid["weekend_ratio"],
                 }
-            elif cluster_id == 1:  # The Sprinter
-                sample = {
-                    "cluster_id": cluster_id,
-                    "persona_label": persona_label,
-                    "performance": {
-                        "avg_minutes_per_module": 0.4,
-                        "consistency_score": -0.45,
-                        "total_activities": -0.4,
-                        "weekend_ratio": 0.94,
-                        "study_time_category": 2,
-                        "total_active_days": 15,
-                    },
-                    "clustering": {
-                        "total_activities": -0.4,
-                        "avg_minutes_per_module": 0.4,
-                        "consistency_score": -0.45,
-                        "weekend_ratio": 0.94,
-                    }
-                }
-            else:  # The Warrior (cluster_id == 2)
-                sample = {
-                    "cluster_id": cluster_id,
-                    "persona_label": persona_label,
-                    "performance": {
-                        "avg_minutes_per_module": 0.28,
-                        "consistency_score": -0.47,
-                        "total_activities": -0.45,
-                        "weekend_ratio": -0.83,
-                        "study_time_category": 2,
-                        "total_active_days": 15,
-                    },
-                    "clustering": {
-                        "total_activities": -0.45,
-                        "avg_minutes_per_module": 0.28,
-                        "consistency_score": -0.47,
-                        "weekend_ratio": -0.83,
-                    }
-                }
+            }
             samples.append(sample)
         
         return {
@@ -401,13 +440,16 @@ async def predict_performance(features: PerformanceFeatures):
 @app.post("/predict/persona", response_model=PersonaPrediction)
 async def predict_persona(features: ClusteringFeatures):
     try:
+        # Ubah Input Dari User ke z-scores buat model
+        readable_features = features.dict()
+        zscore_features = transform_readable_features_to_zscore(readable_features)
+        
         df = pd.DataFrame(
-            [[features.dict()[col] for col in CLUSTER_ORDER]],
+            [[zscore_features[col] for col in CLUSTER_ORDER]],
             columns=CLUSTER_ORDER
         )
 
         scaled = scaler.transform(df)
-
         cluster = int(kmeans_model.predict(scaled)[0])
         persona = persona_mapping.get(str(cluster), "Unknown Persona")
 
@@ -423,11 +465,10 @@ async def predict_persona(features: ClusteringFeatures):
 @app.post("/predict/insight")
 async def predict_insight(body: dict):
     try:
-        # Parse parts
         perf = PerformanceFeatures(**body["perf"])
         cluster = ClusteringFeatures(**body["cluster"])
 
-        # Rebuild DataFrame with correct order
+        # Urutin DataFrame 
         perf_df = pd.DataFrame(
             [[perf.dict()[col] for col in PERFORMANCE_ORDER]],
             columns=PERFORMANCE_ORDER
@@ -440,26 +481,36 @@ async def predict_insight(body: dict):
 
         # Predictions
         perf_pred = float(performance_model.predict(perf_df)[0])
-        scaled = scaler.transform(cluster_df)
+        
+        # Ubah clustering Dari User ke z-scores buat model
+        readable_cluster_features = cluster.dict()
+        zscore_cluster_features = transform_readable_features_to_zscore(readable_cluster_features)
+        
+        cluster_df_zscore = pd.DataFrame(
+            [[zscore_cluster_features[col] for col in CLUSTER_ORDER]],
+            columns=CLUSTER_ORDER
+        )
+        
+        scaled = scaler.transform(cluster_df_zscore)
         cluster_id = int(kmeans_model.predict(scaled)[0])
         persona = persona_mapping.get(str(cluster_id), "Unknown Persona")
 
         # Insight messages
         persona_insight = {
             "The Consistent": [
-                "Kamu memiliki pola belajar yang stabil.",
-                "Kedisiplinan kamu membantu progresmu meningkat.",
-                "Pertahankan ritme belajar kamu!"
+                "Kamu memiliki pola belajar yang sangat stabil dan teratur.",
+                "Kedisiplinan kamu adalah kekuatan utama dalam pembelajaran.",
+                "Konsistensi tinggi kamu menghasilkan progress yang steady dan berkelanjutan."
             ],
             "The Sprinter": [
-                "Kamu cepat memahami materi.",
-                "Tingkatkan konsistensi agar makin maksimal.",
-                "Metode sprint cocok untukmu."
+                "Kamu cepat memahami materi dan efisien dalam belajar.",
+                "Kemampuan sprint kamu bagus, tapi konsistensi bisa ditingkatkan.",
+                "Metode pembelajaran cepat cocok dengan gaya belajar kamu."
             ],
             "The Warrior": [
-                "Kamu punya semangat tinggi dalam menyelesaikan tugas.",
-                "Tipe pembelajar yang cepat adaptasi di materi sulit.",
-                "Terus gunakan momentum ini untuk menyelesaikan lebih banyak modul."
+                "Kamu punya semangat tinggi dan dedikasi kuat dalam belajar.",
+                "Tipe pembelajar yang gigih dan tidak mudah menyerah pada materi sulit.",
+                "Effort tinggi kamu akan membuahkan hasil jika diimbangi dengan konsistensi."
             ]
         }
 
@@ -471,7 +522,6 @@ async def predict_insight(body: dict):
             "Performa perlu ditingkatkan."
         )
 
-        # Generate actionable recommendations
         recommendations = generate_recommendations(
             perf_dict=perf.dict(),
             cluster_dict=cluster.dict(),
@@ -585,14 +635,15 @@ async def get_benchmark_stats():
         
         for cluster_id, centroid in enumerate(centroids):
             persona_label = persona_mapping.get(str(cluster_id), "Unknown")
+            readable_centroid = transform_centroid_to_readable(centroid)
             
             benchmark_data.append({
                 "cluster_id": cluster_id,
                 "persona": persona_label,
-                "avg_activities": round(float(centroid[0]), 2),
-                "avg_minutes_per_module": round(float(centroid[1]), 2),
-                "avg_consistency": round(float(centroid[2]), 2),
-                "avg_weekend_ratio": round(float(centroid[3]), 2)
+                "avg_activities": readable_centroid["total_activities"],
+                "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
+                "avg_consistency": readable_centroid["consistency_score"],
+                "avg_weekend_ratio": readable_centroid["weekend_ratio"]
             })
         
         # Calculate overall averages
@@ -611,77 +662,82 @@ async def get_benchmark_stats():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/compare/performance")
 async def compare_performance(features: PerformanceFeatures):
-    """
-    Compare user's performance with benchmark averages
-    """
     try:
-        # Get user's prediction
-        df = pd.DataFrame([[features.dict()[col] for col in PERFORMANCE_ORDER]],
-                          columns=PERFORMANCE_ORDER)
-        user_perf = float(performance_model.predict(df)[0])
-        
-        # Get benchmark stats
+        # USER PERFORMANCE
+        user_df = pd.DataFrame(
+            [[features.dict()[col] for col in PERFORMANCE_ORDER]],
+            columns=PERFORMANCE_ORDER
+        )
+        user_perf = float(performance_model.predict(user_df)[0])
+
+        # BENCHMARK DARI CENTROIDS (ML)
         centroids = kmeans_model.cluster_centers_
         benchmark_data = []
-        
+        readable_centroids = []
+
         for cluster_id, centroid in enumerate(centroids):
             persona_label = persona_mapping.get(str(cluster_id), "Unknown")
-            
-            # Prepare benchmark features
+            readable = transform_centroid_to_readable(centroid)
+            readable_centroids.append(readable)
+
             bench_features = {
-                "total_activities": float(centroid[0]),
-                "avg_minutes_per_module": float(centroid[1]),
-                "consistency_score": float(centroid[2]),
-                "weekend_ratio": float(centroid[3]),
+                "total_activities": readable["total_activities"],
+                "avg_minutes_per_module": readable["avg_minutes_per_module"],
+                "consistency_score": readable["consistency_score"],
+                "weekend_ratio": readable["weekend_ratio"],
                 "study_time_category": features.study_time_category,
                 "total_active_days": features.total_active_days
             }
-            
-            bench_df = pd.DataFrame([[bench_features[col] for col in PERFORMANCE_ORDER]],
-                                   columns=PERFORMANCE_ORDER)
+
+            bench_df = pd.DataFrame(
+                [[bench_features[col] for col in PERFORMANCE_ORDER]],
+                columns=PERFORMANCE_ORDER
+            )
+
             bench_perf = float(performance_model.predict(bench_df)[0])
-            
+
             benchmark_data.append({
                 "persona": persona_label,
                 "benchmark_performance": round(bench_perf, 2),
                 "difference": round(user_perf - bench_perf, 2)
             })
-        
-        # Calculate percentile
+
+        # PERCENTILE
         all_perfs = [b["benchmark_performance"] for b in benchmark_data]
-        percentile = (sum(1 for p in all_perfs if p < user_perf) / len(all_perfs)) * 100
-        
-        # Comparison analysis
-        user_data = features.dict()
+        percentile = (
+            sum(1 for p in all_perfs if p < user_perf) / len(all_perfs)
+        ) * 100
+
+        # DYNAMIC AVERAGES Dari (ML)
+        avg_activities = sum(c["total_activities"] for c in readable_centroids) / len(readable_centroids)
+        avg_consistency = sum(c["consistency_score"] for c in readable_centroids) / len(readable_centroids)
+        avg_time = sum(c["avg_minutes_per_module"] for c in readable_centroids) / len(readable_centroids)
+
+        # INSIGHTS
         comparison_insights = []
-        
-        # Compare activities
-        avg_activities = sum([c[0] for c in centroids]) / len(centroids)
+        user_data = features.dict()
+
         if user_data["total_activities"] > avg_activities * 1.2:
-            comparison_insights.append("📊 Kamu 20% lebih aktif dari rata-rata learner!")
+            comparison_insights.append("Kamu lebih aktif dari rata-rata learner.")
         elif user_data["total_activities"] < avg_activities * 0.8:
-            comparison_insights.append("📊 Tingkatkan aktivitas belajar untuk mencapai level rata-rata")
-        
-        # Compare consistency
-        avg_consistency = sum([c[2] for c in centroids]) / len(centroids)
+            comparison_insights.append("Tingkatkan aktivitas belajar untuk mencapai rata-rata.")
+
         if user_data["consistency_score"] > avg_consistency * 1.2:
-            comparison_insights.append("⭐ Konsistensi kamu 20% lebih baik dari average!")
+            comparison_insights.append("Konsistensi belajar kamu di atas rata-rata.")
         elif user_data["consistency_score"] < avg_consistency * 0.8:
-            comparison_insights.append("⭐ Fokus pada konsistensi untuk hasil lebih optimal")
-        
-        # Compare study time
-        avg_time = sum([c[1] for c in centroids]) / len(centroids)
+            comparison_insights.append("Fokus meningkatkan konsistensi belajar.")
+
         if user_data["avg_minutes_per_module"] > avg_time * 1.2:
-            comparison_insights.append("⏱️ Waktu belajar kamu lebih mendalam dari rata-rata")
+            comparison_insights.append("Durasi belajar kamu lebih mendalam dari rata-rata.")
         elif user_data["avg_minutes_per_module"] < avg_time * 0.8:
-            comparison_insights.append("⏱️ Pertimbangkan menambah durasi per modul")
-        
+            comparison_insights.append("Pertimbangkan menambah durasi belajar per modul.")
+
         return {
             "user_performance": round(user_perf, 2),
             "percentile": round(percentile, 1),
+            "benchmark_source": "kmeans_centroids",
             "benchmark_comparison": benchmark_data,
             "comparison_insights": comparison_insights,
             "performance_level": (
@@ -691,5 +747,6 @@ async def compare_performance(features: PerformanceFeatures):
                 "Needs Improvement"
             )
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

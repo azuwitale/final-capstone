@@ -13,7 +13,7 @@ import {
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     systemStatus: "Online",
     lastScore: 87.2,
     totalAnalysis: 24,

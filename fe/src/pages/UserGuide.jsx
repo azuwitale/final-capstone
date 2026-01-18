@@ -20,7 +20,7 @@ export default function UserGuide() {
   const sections = [
     {
       id: "getting-started",
-      title: "🚀 Getting Started",
+      title: "Getting Started",
       icon: <Lightbulb className="w-6 h-6" />,
       color: "from-blue-500 to-cyan-500",
       content: [
@@ -42,7 +42,7 @@ export default function UserGuide() {
     },
     {
       id: "understanding-fields",
-      title: "📝 Memahami Setiap Field",
+      title: "Memahami Setiap Field",
       icon: <Info className="w-6 h-6" />,
       color: "from-purple-500 to-pink-500",
       performanceFields: [
@@ -108,7 +108,7 @@ export default function UserGuide() {
             "Contoh: 30 activities = total kegiatan belajar yang sudah kamu selesaikan",
           goodRange:
             "Clustering akan mengelompokkan: <20 (Low), 20-35 (Medium), >35 (High)",
-          note: "⚠️ Harus sama dengan nilai di Performance Features",
+          note: "Harus sama dengan nilai di Performance Features",
         },
         {
           name: "Avg Minutes Per Module",
@@ -118,7 +118,7 @@ export default function UserGuide() {
           example: "Contoh: 25 menit = durasi rata-rata untuk satu modul",
           goodRange:
             "Clustering akan identifikasi: <15 (Fast), 15-30 (Moderate), >30 (Deep)",
-          note: "⚠️ Harus sama dengan nilai di Performance Features",
+          note: "Harus sama dengan nilai di Performance Features",
         },
         {
           name: "Consistency Score",
@@ -128,7 +128,7 @@ export default function UserGuide() {
           example: "Contoh: 7/10 = belajar teratur dengan konsistensi baik",
           goodRange:
             "Clustering akan kategorikan pola belajar berdasarkan konsistensi ini",
-          note: "⚠️ Harus sama dengan nilai di Performance Features",
+          note: "Harus sama dengan nilai di Performance Features",
         },
         {
           name: "Weekend Ratio",
@@ -138,13 +138,13 @@ export default function UserGuide() {
           example: "Contoh: 0.3 = 30% belajar di weekend, 70% di weekday",
           goodRange:
             "Clustering akan analisis pola: Weekend Warrior vs Weekday Learner",
-          note: "⚠️ Harus sama dengan nilai di Performance Features",
+          note: "Harus sama dengan nilai di Performance Features",
         },
       ],
     },
     {
       id: "reading-results",
-      title: "📊 Membaca Hasil Analysis",
+      title: "Membaca Hasil Analysis",
       icon: <TrendingUp className="w-6 h-6" />,
       color: "from-green-500 to-emerald-500",
       results: [
@@ -208,7 +208,7 @@ export default function UserGuide() {
     },
     {
       id: "understanding-progress",
-      title: "📈 Memahami Progress Bars",
+      title: "Memahami Progress Bars",
       icon: <Activity className="w-6 h-6" />,
       color: "from-orange-500 to-red-500",
       progressGuide: [
@@ -230,26 +230,26 @@ export default function UserGuide() {
     },
     {
       id: "using-recommendations",
-      title: "💡 Menggunakan Rekomendasi",
+      title: "Menggunakan Rekomendasi",
       icon: <Zap className="w-6 h-6" />,
       color: "from-yellow-500 to-amber-500",
       recommendations: [
         {
-          priority: "🔥 High Priority",
+          priority: "High Priority",
           color: "red",
           action:
             "Lakukan SEGERA! Ini adalah area kritis yang perlu perbaikan langsung.",
           timeframe: "Mulai hari ini dan konsisten selama 2 minggu",
         },
         {
-          priority: "⚡ Medium Priority",
+          priority: "Medium Priority",
           color: "yellow",
           action:
             "Lakukan dalam minggu ini. Area yang penting untuk improvement.",
           timeframe: "Implement dalam 1-2 minggu",
         },
         {
-          priority: "✅ Low Priority",
+          priority: "Low Priority",
           color: "green",
           action:
             "Ini adalah optimasi. Lakukan setelah high & medium priority selesai.",
@@ -259,7 +259,7 @@ export default function UserGuide() {
     },
     {
       id: "benchmark-comparison",
-      title: "🏆 Memahami Comparison & Benchmark",
+      title: "Memahami Comparison & Benchmark",
       icon: <Users className="w-6 h-6" />,
       color: "from-indigo-500 to-purple-500",
       comparison: [
@@ -268,10 +268,10 @@ export default function UserGuide() {
           explanation:
             "Menunjukkan posisi kamu dibanding learner lain. 75% = kamu lebih baik dari 75% learner.",
           interpretation: [
-            "75-100%: Top Performer 🏆",
-            "50-74%: Above Average ⭐",
-            "25-49%: Average 📊",
-            "0-24%: Needs Improvement 📈",
+            "75-100%: Top Performer",
+            "50-74%: Above Average ",
+            "25-49%: Average",
+            "0-24%: Needs Improvement",
           ],
         },
         {
@@ -279,8 +279,8 @@ export default function UserGuide() {
           explanation:
             "Melihat performa kamu vs benchmark setiap persona dalam format yang mudah dipahami.",
           symbols: [
-            "✅ Hijau 'Lebih tinggi X%': Performa kamu LEBIH BAIK dari persona ini sebesar X%",
-            "📊 Biru 'Masih X% di bawah': Performa kamu masih di bawah X%, ikuti rekomendasi untuk improve",
+            "Hijau 'Lebih tinggi X%': Performa kamu LEBIH BAIK dari persona ini sebesar X%",
+            "Biru 'Masih X% di bawah': Performa kamu masih di bawah X%, ikuti rekomendasi untuk improve",
             "≈ Gray 'Setara': Performa kamu mirip dengan benchmark persona ini",
           ],
           example:
@@ -432,12 +432,12 @@ export default function UserGuide() {
                   <p className="text-gray-700 mb-3">{field.explanation}</p>
                   <div className="bg-white rounded-xl p-4 mb-3">
                     <p className="text-sm text-gray-600">
-                      <strong>💡 {field.example}</strong>
+                      <strong>{field.example}</strong>
                     </p>
                   </div>
                   <div className="bg-green-50 rounded-xl p-3 border border-green-200">
                     <p className="text-sm text-green-800">
-                      <strong>✅ {field.goodRange}</strong>
+                      <strong>{field.goodRange}</strong>
                     </p>
                   </div>
                 </div>
@@ -506,12 +506,12 @@ export default function UserGuide() {
                   <p className="text-gray-700 mb-3">{field.explanation}</p>
                   <div className="bg-white rounded-xl p-4 mb-3">
                     <p className="text-sm text-gray-600">
-                      <strong>💡 {field.example}</strong>
+                      <strong>{field.example}</strong>
                     </p>
                   </div>
                   <div className="bg-purple-100 rounded-xl p-3 border border-purple-300 mb-3">
                     <p className="text-sm text-purple-800">
-                      <strong>📊 Clustering: {field.goodRange}</strong>
+                      <strong>Clustering: {field.goodRange}</strong>
                     </p>
                   </div>
                   {field.note && (
@@ -556,7 +556,7 @@ export default function UserGuide() {
                   dengan learner lain.
                 </p>
                 <p className="text-indigo-700 font-semibold mt-3">
-                  ✨ Tip: Gunakan tombol "Auto-Fill" untuk mengisi kedua form
+                  Tip: Gunakan tombol "Auto-Fill" untuk mengisi kedua form
                   secara otomatis dengan data yang konsisten!
                 </p>
               </div>
@@ -621,12 +621,12 @@ export default function UserGuide() {
                   </p>
                   <div className="bg-white rounded-xl p-3 mb-2">
                     <p className="text-xs text-gray-600">
-                      <strong>💪 Kekuatan:</strong> {persona.strength}
+                      <strong>Kekuatan:</strong> {persona.strength}
                     </p>
                   </div>
                   <div className="bg-white rounded-xl p-3">
                     <p className="text-xs text-gray-600">
-                      <strong>💡 Saran:</strong> {persona.advice}
+                      <strong>Saran:</strong> {persona.advice}
                     </p>
                   </div>
                 </div>
@@ -659,8 +659,8 @@ export default function UserGuide() {
                     guide.color.includes("Green")
                       ? "bg-green-500"
                       : guide.color.includes("Yellow")
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                   }`}
                 ></div>
                 <div className="flex-1">
@@ -693,8 +693,8 @@ export default function UserGuide() {
                   rec.color === "red"
                     ? "bg-red-50 border-red-200"
                     : rec.color === "yellow"
-                    ? "bg-yellow-50 border-yellow-200"
-                    : "bg-green-50 border-green-200"
+                      ? "bg-yellow-50 border-yellow-200"
+                      : "bg-green-50 border-green-200"
                 }`}
               >
                 <h3 className="font-bold text-gray-800 mb-2 text-lg">
@@ -702,7 +702,7 @@ export default function UserGuide() {
                 </h3>
                 <p className="text-gray-700 mb-2">{rec.action}</p>
                 <p className="text-sm text-gray-600">
-                  <strong>⏱️ Timeline:</strong> {rec.timeframe}
+                  <strong>Timeline:</strong> {rec.timeframe}
                 </p>
               </div>
             ))}
@@ -740,7 +740,7 @@ export default function UserGuide() {
               {item.example && (
                 <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
                   <p className="text-sm text-indigo-800">
-                    <strong>💡 {item.example}</strong>
+                    <strong>{item.example}</strong>
                   </p>
                 </div>
               )}
@@ -763,7 +763,7 @@ export default function UserGuide() {
               </div>
               <p className="text-sm text-green-600">
                 Artinya: Performa kamu <strong>25% lebih baik</strong> dari
-                benchmark persona ini. Pertahankan pola belajar kamu! 🎉
+                benchmark persona ini. Pertahankan pola belajar kamu!
               </p>
             </div>
 
@@ -778,7 +778,7 @@ export default function UserGuide() {
               <p className="text-sm text-blue-600">
                 Artinya: Performa kamu masih <strong>15% di bawah</strong>{" "}
                 benchmark persona ini. Ikuti rekomendasi untuk mencapai level
-                mereka! 📈
+                mereka!
               </p>
             </div>
 
@@ -801,7 +801,7 @@ export default function UserGuide() {
 
       {/* Footer CTA */}
       <div className="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white text-center shadow-xl">
-        <h3 className="text-2xl font-bold mb-3">Siap Mulai Analysis? 🚀</h3>
+        <h3 className="text-2xl font-bold mb-3">Siap Mulai Analysis?</h3>
         <p className="mb-6 opacity-90">
           Sekarang kamu sudah paham cara menggunakan platform ini. Yuk mulai
           analyze pola belajar kamu!

@@ -81,7 +81,7 @@ export default function Analysis() {
       setError(null);
     } catch (err) {
       setError(
-        "Failed to load sample data. Please check if backend is running."
+        "Failed to load sample data. Please check if backend is running.",
       );
     } finally {
       setLoadingSample(false);
@@ -132,7 +132,7 @@ export default function Analysis() {
       setComparisonData(comparison);
     } catch {
       setError(
-        "Failed to connect to API. Please make sure the backend is running."
+        "Failed to connect to API. Please make sure the backend is running.",
       );
     } finally {
       setLoading(false);
@@ -147,19 +147,19 @@ export default function Analysis() {
     return {
       consistency: Math.min(
         (Number(perfInput.consistency_score) / 10) * 100,
-        100
+        100,
       ),
       activities: Math.min(
         (Number(perfInput.total_activities) / 50) * 100,
-        100
+        100,
       ),
       studyTime: Math.min(
         (Number(perfInput.avg_minutes_per_module) / 60) * 100,
-        100
+        100,
       ),
       activeDays: Math.min(
         (Number(perfInput.total_active_days) / 30) * 100,
-        100
+        100,
       ),
     };
   };
@@ -252,10 +252,10 @@ export default function Analysis() {
               </div>
               <p className="text-sm text-gray-600">
                 {progressData.consistency >= 80
-                  ? "Excellent consistency! 🎯"
+                  ? "Excellent consistency!"
                   : progressData.consistency >= 50
-                  ? "Good progress, keep it up! 💪"
-                  : "Room for improvement 📈"}
+                    ? "Good progress, keep it up! "
+                    : "Room for improvement"}
               </p>
             </div>
 
@@ -282,10 +282,10 @@ export default function Analysis() {
               </div>
               <p className="text-sm text-gray-600">
                 {progressData.activities >= 80
-                  ? "Highly active learner! 🚀"
+                  ? "Highly active learner!"
                   : progressData.activities >= 50
-                  ? "Good activity level! ⭐"
-                  : "More practice recommended 📚"}
+                    ? "Good activity level!"
+                    : "More practice recommended"}
               </p>
             </div>
 
@@ -312,10 +312,10 @@ export default function Analysis() {
               </div>
               <p className="text-sm text-gray-600">
                 {progressData.studyTime >= 80
-                  ? "Deep learning approach! 🧠"
+                  ? "Deep learning approach!"
                   : progressData.studyTime >= 50
-                  ? "Balanced study time ⚡"
-                  : "Quick learner or needs more focus? 🤔"}
+                    ? "Balanced study time"
+                    : "Quick learner or needs more focus?"}
               </p>
             </div>
 
@@ -342,10 +342,10 @@ export default function Analysis() {
               </div>
               <p className="text-sm text-gray-600">
                 {progressData.activeDays >= 80
-                  ? "Exceptional dedication! 🔥"
+                  ? "Exceptional dedication!"
                   : progressData.activeDays >= 50
-                  ? "Regular engagement! 👍"
-                  : "Build a stronger habit! 💡"}
+                    ? "Regular engagement!"
+                    : "Build a stronger habit!"}
               </p>
             </div>
           </div>
@@ -455,8 +455,8 @@ export default function Analysis() {
                 {performanceData.predicted_performance > 3.5
                   ? "Outstanding performance with consistent high-quality learning patterns. You're excelling across all metrics."
                   : performanceData.predicted_performance > 2.5
-                  ? "Solid performance showing good learning habits. There's room to push yourself to the next level."
-                  : "Your learning journey is just beginning. Focus on building consistent study habits for better results."}
+                    ? "Solid performance showing good learning habits. There's room to push yourself to the next level."
+                    : "Your learning journey is just beginning. Focus on building consistent study habits for better results."}
               </p>
 
               <div className="bg-white rounded-2xl p-4 mb-4">
@@ -510,10 +510,10 @@ export default function Analysis() {
                   {personaData.persona === "The Consistent"
                     ? "You demonstrate remarkable consistency in your learning patterns, building a solid foundation through regular practice."
                     : personaData.persona === "The Sprinter"
-                    ? "You're a fast learner who quickly grasps new concepts. Your speed is impressive, focus on depth for even better results."
-                    : personaData.persona === "The Warrior"
-                    ? "You tackle challenges head-on with high energy and determination. Your persistence in difficult materials sets you apart."
-                    : "Your unique learning style shows potential for growth across multiple dimensions."}
+                      ? "You're a fast learner who quickly grasps new concepts. Your speed is impressive, focus on depth for even better results."
+                      : personaData.persona === "The Warrior"
+                        ? "You tackle challenges head-on with high energy and determination. Your persistence in difficult materials sets you apart."
+                        : "Your unique learning style shows potential for growth across multiple dimensions."}
                 </p>
               </div>
 
@@ -546,8 +546,8 @@ export default function Analysis() {
                         Number(perfInput.consistency_score) >= 7
                           ? "bg-green-500"
                           : Number(perfInput.consistency_score) >= 4
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                       }`}
                     ></div>
                     <span className="text-gray-600">
@@ -556,8 +556,8 @@ export default function Analysis() {
                         {Number(perfInput.consistency_score) >= 7
                           ? "Strong"
                           : Number(perfInput.consistency_score) >= 4
-                          ? "Moderate"
-                          : "Needs Work"}
+                            ? "Moderate"
+                            : "Needs Work"}
                       </span>
                     </span>
                   </div>
@@ -569,8 +569,8 @@ export default function Analysis() {
                         Number(perfInput.total_activities) >= 35
                           ? "bg-green-500"
                           : Number(perfInput.total_activities) >= 20
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                       }`}
                     ></div>
                     <span className="text-gray-600">
@@ -579,8 +579,8 @@ export default function Analysis() {
                         {Number(perfInput.total_activities) >= 35
                           ? "High"
                           : Number(perfInput.total_activities) >= 20
-                          ? "Medium"
-                          : "Low"}
+                            ? "Medium"
+                            : "Low"}
                       </span>
                     </span>
                   </div>
@@ -722,7 +722,7 @@ export default function Analysis() {
                               {insight}
                             </p>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -738,8 +738,12 @@ export default function Analysis() {
                     const userScore = comparisonData.user_performance;
                     const benchScore = bench.benchmark_performance;
                     const difference = bench.difference;
-                    const isHigher = difference > 0;
-                    const isEqual = Math.abs(difference) < 0.1;
+                    const EPSILON = 0.01;
+
+                    const diff = userScore - benchScore;
+
+                    const isEqual = Math.abs(diff) < EPSILON;
+                    const isHigher = diff > EPSILON;
 
                     // Calculate percentage difference for better understanding
                     const percentDiff =
@@ -902,10 +906,10 @@ export default function Analysis() {
                             }`}
                           >
                             {rec.priority === "high"
-                              ? "🔥 High Priority"
+                              ? "High Priority"
                               : rec.priority === "medium"
-                              ? "⚡ Medium"
-                              : "✅ Low Priority"}
+                                ? "Medium"
+                                : "Low Priority"}
                           </span>
                         </div>
 
@@ -948,7 +952,7 @@ export default function Analysis() {
                     rekomendasi personalized. Fokus pada{" "}
                     {
                       insightData.recommendations.filter(
-                        (r) => r.priority === "high"
+                        (r) => r.priority === "high",
                       ).length
                     }{" "}
                     rekomendasi prioritas tinggi untuk hasil maksimal dalam 2-4

@@ -7,7 +7,7 @@ Project Name : Persona Flow
 
 Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan rekomendasi untuk meningkatkan performa belajar.
 
-## 👥 Tim Pengembang
+## Tim Pengembang
 
 | Nama                                       | Cohort ID   | Role                 |
 | ------------------------------------------ | ----------- | -------------------- |
@@ -18,7 +18,7 @@ Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan 
 | Ugi Riska Prasetio                         | R204D5Y1924 | Backend              |
 | Daffa Kurnia Nurdiansyah                   | R129D5Y0409 | Frontend             |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -115,7 +115,7 @@ Platform analisis pembelajaran berbasis AI yang memberikan insight personal dan 
 
 5. **Aplikasi akan tersedia di**: `http://localhost:3000`
 
-## 🛠️ Commands docker
+## Commands docker
 
 ```bash
 docker-compose up --build    # Start aplikasi
@@ -123,14 +123,14 @@ docker-compose down          # Stop aplikasi
 docker-compose logs          # View logs
 ```
 
-## 🎯 Fitur
+## Fitur
 
 - **Prediksi Performa**: Analisis tingkat performa belajar
 - **Persona Learning**: Identifikasi tipe pembelajar (Consistent, Sprinter, Warrior)
 - **Rekomendasi Personal**: Saran untuk meningkatkan efektivitas belajar
 - **Benchmark**: Perbandingan dengan rata-rata learner lain
 
-## 🔧 Tech Stack
+## Tech Stack
 
 **Backend**: FastAPI, scikit-learn, pandas, numpy
 **Frontend**: React, TailwindCSS, Recharts
