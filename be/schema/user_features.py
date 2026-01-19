@@ -8,19 +8,21 @@ class UserFeatures(BaseModel):
     login_frequency: float
 
 class PerformanceFeatures(BaseModel):
+    completion_velocity: float
     avg_minutes_per_module: float
-    consistency_score: float
-    total_activities: float
+    login_gap_std: float
     weekend_ratio: float
+    night_study_ratio: float
     study_time_category: float
     total_active_days: float
 
   
 class ClusteringFeatures(BaseModel):
+    completion_velocity: float
     avg_minutes_per_module: float
-    consistency_score: float
-    total_activities: float
+    login_gap_std: float
     weekend_ratio: float
+    night_study_ratio: float
 
 class PerformancePrediction(BaseModel):
     predicted_performance: float

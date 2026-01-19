@@ -118,15 +118,18 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
                 <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Activity className="w-7 h-7 text-blue-600" />
                 </div>
                 <div className="text-3xl font-bold text-gray-800 mb-1">
-                  {benchmarkData.overall_average.avg_activities}
+                  {(
+                    benchmarkData.overall_average.avg_completion_velocity * 100
+                  ).toFixed(0)}
+                  %
                 </div>
-                <div className="text-sm text-gray-600">Avg Activities</div>
+                <div className="text-sm text-gray-600">Completion Rate</div>
               </div>
 
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
@@ -144,9 +147,9 @@ export default function Dashboard() {
                   <Award className="w-7 h-7 text-green-600" />
                 </div>
                 <div className="text-3xl font-bold text-gray-800 mb-1">
-                  {benchmarkData.overall_average.avg_consistency}/10
+                  {benchmarkData.overall_average.avg_login_gap_std.toFixed(1)}
                 </div>
-                <div className="text-sm text-gray-600">Avg Consistency</div>
+                <div className="text-sm text-gray-600">Login Gap (days)</div>
               </div>
 
               <div className="bg-white rounded-2xl p-6 text-center shadow-md">
@@ -160,6 +163,19 @@ export default function Dashboard() {
                   %
                 </div>
                 <div className="text-sm text-gray-600">Weekend Ratio</div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 text-center shadow-md">
+                <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <Users className="w-7 h-7 text-indigo-600" />
+                </div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {(
+                    benchmarkData.overall_average.avg_night_study_ratio * 100
+                  ).toFixed(0)}
+                  %
+                </div>
+                <div className="text-sm text-gray-600">Night Study</div>
               </div>
             </div>
           </div>
@@ -198,11 +214,11 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2">
                         <Activity className="w-4 h-4 text-blue-600" />
                         <span className="text-sm text-gray-700">
-                          Activities
+                          Completion Rate
                         </span>
                       </div>
                       <span className="font-bold text-blue-600">
-                        {persona.avg_activities}
+                        {(persona.avg_completion_velocity * 100).toFixed(0)}%
                       </span>
                     </div>
 
@@ -221,12 +237,10 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
                       <div className="flex items-center gap-2">
                         <Award className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-gray-700">
-                          Consistency
-                        </span>
+                        <span className="text-sm text-gray-700">Login Gap</span>
                       </div>
                       <span className="font-bold text-green-600">
-                        {persona.avg_consistency}/10
+                        {persona.avg_login_gap_std.toFixed(1)} days
                       </span>
                     </div>
 
@@ -239,6 +253,18 @@ export default function Dashboard() {
                       </div>
                       <span className="font-bold text-orange-600">
                         {(persona.avg_weekend_ratio * 100).toFixed(0)}%
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-xl">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-indigo-600" />
+                        <span className="text-sm text-gray-700">
+                          Night Study
+                        </span>
+                      </div>
+                      <span className="font-bold text-indigo-600">
+                        {(persona.avg_night_study_ratio * 100).toFixed(0)}%
                       </span>
                     </div>
                   </div>

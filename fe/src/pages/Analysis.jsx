@@ -26,19 +26,21 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export default function Analysis() {
   const [perfInput, setPerfInput] = useState({
+    completion_velocity: "",
     avg_minutes_per_module: "",
-    consistency_score: "",
-    total_activities: "",
+    login_gap_std: "",
     weekend_ratio: "",
+    night_study_ratio: "",
     study_time_category: "",
     total_active_days: "",
   });
 
   const [clusterInput, setClusterInput] = useState({
+    completion_velocity: "",
     avg_minutes_per_module: "",
-    consistency_score: "",
-    total_activities: "",
+    login_gap_std: "",
     weekend_ratio: "",
+    night_study_ratio: "",
   });
 
   const [performanceData, setPerformanceData] = useState(null);
@@ -141,17 +143,16 @@ export default function Analysis() {
 
   // Calculate progress percentages for visual indicators
   const getProgressData = () => {
-    if (!perfInput.consistency_score || !perfInput.total_activities)
-      return null;
+    if (!perfInput.login_gap_std || !perfInput.completion_velocity) return null;
 
     return {
-      consistency: Math.min(
-        (Number(perfInput.consistency_score) / 10) * 100,
+      completion: Math.min(
+        (Number(perfInput.completion_velocity) / 1.0) * 100,
         100,
       ),
-      activities: Math.min(
-        (Number(perfInput.total_activities) / 50) * 100,
-        100,
+      consistency: Math.max(
+        0,
+        Math.min(((7.0 - Number(perfInput.login_gap_std)) / 7.0) * 100, 100),
       ),
       studyTime: Math.min(
         (Number(perfInput.avg_minutes_per_module) / 60) * 100,
@@ -161,6 +162,7 @@ export default function Analysis() {
         (Number(perfInput.total_active_days) / 30) * 100,
         100,
       ),
+      nightStudy: Number(perfInput.night_study_ratio) * 100,
     };
   };
 
@@ -229,22 +231,52 @@ export default function Analysis() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Consistency Score */}
+            {/* Completion Velocity */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-blue-600" />
                   <span className="font-semibold text-gray-800">
-                    Consistency Score
+                    Completion Velocity
                   </span>
                 </div>
                 <span className="text-2xl font-bold text-blue-600">
-                  {perfInput.consistency_score}/10
+                  {(Number(perfInput.completion_velocity) * 100).toFixed(0)}%
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progressData.completion}%` }}
+                >
+                  <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">
+                {progressData.completion >= 80
+                  ? "Excellent completion rate!"
+                  : progressData.completion >= 50
+                    ? "Good progress, keep it up!"
+                    : "Focus on completing more tasks"}
+              </p>
+            </div>
+
+            {/* Login Consistency (Lower gap = better) */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-green-600" />
+                  <span className="font-semibold text-gray-800">
+                    Login Consistency
+                  </span>
+                </div>
+                <span className="text-2xl font-bold text-green-600">
+                  {Number(perfInput.login_gap_std).toFixed(1)}
+                </span>
+              </div>
+              <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progressData.consistency}%` }}
                 >
                   <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
@@ -252,40 +284,10 @@ export default function Analysis() {
               </div>
               <p className="text-sm text-gray-600">
                 {progressData.consistency >= 80
-                  ? "Excellent consistency!"
+                  ? "Very consistent login pattern!"
                   : progressData.consistency >= 50
-                    ? "Good progress, keep it up! "
-                    : "Room for improvement"}
-              </p>
-            </div>
-
-            {/* Total Activities */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-green-600" />
-                  <span className="font-semibold text-gray-800">
-                    Total Activities
-                  </span>
-                </div>
-                <span className="text-2xl font-bold text-green-600">
-                  {perfInput.total_activities}
-                </span>
-              </div>
-              <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${progressData.activities}%` }}
-                >
-                  <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600">
-                {progressData.activities >= 80
-                  ? "Highly active learner!"
-                  : progressData.activities >= 50
-                    ? "Good activity level!"
-                    : "More practice recommended"}
+                    ? "Good consistency!"
+                    : "Work on regular login habits"}
               </p>
             </div>
 
@@ -319,33 +321,33 @@ export default function Analysis() {
               </p>
             </div>
 
-            {/* Active Days */}
+            {/* Night Study Ratio */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-orange-600" />
                   <span className="font-semibold text-gray-800">
-                    Active Days
+                    Night Study Ratio
                   </span>
                 </div>
                 <span className="text-2xl font-bold text-orange-600">
-                  {perfInput.total_active_days} days
+                  {(Number(perfInput.night_study_ratio) * 100).toFixed(0)}%
                 </span>
               </div>
               <div className="relative w-full h-4 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${progressData.activeDays}%` }}
+                  style={{ width: `${progressData.nightStudy}%` }}
                 >
                   <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                {progressData.activeDays >= 80
-                  ? "Exceptional dedication!"
-                  : progressData.activeDays >= 50
-                    ? "Regular engagement!"
-                    : "Build a stronger habit!"}
+                {progressData.nightStudy >= 60
+                  ? "Night owl learner!"
+                  : progressData.nightStudy >= 30
+                    ? "Balanced schedule"
+                    : "Day time focused!"}
               </p>
             </div>
           </div>
@@ -364,22 +366,34 @@ export default function Analysis() {
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {Object.keys(perfInput).map((key) => (
-              <div key={key} className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
-                  {key.replaceAll("_", " ")}
-                </label>
-                <input
-                  name={key}
-                  value={perfInput[key]}
-                  onChange={(e) => handleChange(e, setPerfInput)}
-                  placeholder={`Enter ${key.replaceAll("_", " ")}`}
-                  className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  type="number"
-                  step="0.01"
-                />
-              </div>
-            ))}
+            {Object.keys(perfInput).map((key) => {
+              const fieldLabels = {
+                completion_velocity: "Completion Velocity (0-1)",
+                avg_minutes_per_module: "Avg Minutes per Module",
+                login_gap_std: "Login Gap Std (days)",
+                weekend_ratio: "Weekend Study Ratio (0-1)",
+                night_study_ratio: "Night Study Ratio (0-1)",
+                study_time_category: "Study Time Category (1-3)",
+                total_active_days: "Total Active Days",
+              };
+
+              return (
+                <div key={key} className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {fieldLabels[key] || key.replaceAll("_", " ")}
+                  </label>
+                  <input
+                    name={key}
+                    value={perfInput[key]}
+                    onChange={(e) => handleChange(e, setPerfInput)}
+                    placeholder={`Enter ${fieldLabels[key] || key.replaceAll("_", " ")}`}
+                    className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    type="number"
+                    step="0.01"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -393,22 +407,32 @@ export default function Analysis() {
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {Object.keys(clusterInput).map((key) => (
-              <div key={key} className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
-                  {key.replaceAll("_", " ")}
-                </label>
-                <input
-                  name={key}
-                  value={clusterInput[key]}
-                  onChange={(e) => handleChange(e, setClusterInput)}
-                  placeholder={`Enter ${key.replaceAll("_", " ")}`}
-                  className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  type="number"
-                  step="0.01"
-                />
-              </div>
-            ))}
+            {Object.keys(clusterInput).map((key) => {
+              const fieldLabels = {
+                completion_velocity: "Completion Velocity (0-1)",
+                avg_minutes_per_module: "Avg Minutes per Module",
+                login_gap_std: "Login Gap Std (days)",
+                weekend_ratio: "Weekend Study Ratio (0-1)",
+                night_study_ratio: "Night Study Ratio (0-1)",
+              };
+
+              return (
+                <div key={key} className="col-span-2 sm:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {fieldLabels[key] || key.replaceAll("_", " ")}
+                  </label>
+                  <input
+                    name={key}
+                    value={clusterInput[key]}
+                    onChange={(e) => handleChange(e, setClusterInput)}
+                    placeholder={`Enter ${fieldLabels[key] || key.replaceAll("_", " ")}`}
+                    className="w-full border border-gray-200 p-3 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    type="number"
+                    step="0.01"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -539,46 +563,46 @@ export default function Analysis() {
               </div>
 
               <div className="space-y-2 mb-4">
-                {perfInput.consistency_score && (
+                {perfInput.login_gap_std && (
                   <div className="flex items-center gap-2 text-sm">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        Number(perfInput.consistency_score) >= 7
+                        Number(perfInput.login_gap_std) <= 1.5
                           ? "bg-green-500"
-                          : Number(perfInput.consistency_score) >= 4
+                          : Number(perfInput.login_gap_std) <= 2.5
                             ? "bg-yellow-500"
                             : "bg-red-500"
                       }`}
                     ></div>
                     <span className="text-gray-600">
-                      Consistency:{" "}
+                      Login Consistency:{" "}
                       <span className="font-semibold">
-                        {Number(perfInput.consistency_score) >= 7
-                          ? "Strong"
-                          : Number(perfInput.consistency_score) >= 4
-                            ? "Moderate"
+                        {Number(perfInput.login_gap_std) <= 1.5
+                          ? "Excellent"
+                          : Number(perfInput.login_gap_std) <= 2.5
+                            ? "Good"
                             : "Needs Work"}
                       </span>
                     </span>
                   </div>
                 )}
-                {perfInput.total_activities && (
+                {perfInput.completion_velocity && (
                   <div className="flex items-center gap-2 text-sm">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        Number(perfInput.total_activities) >= 35
+                        Number(perfInput.completion_velocity) >= 0.8
                           ? "bg-green-500"
-                          : Number(perfInput.total_activities) >= 20
+                          : Number(perfInput.completion_velocity) >= 0.6
                             ? "bg-yellow-500"
                             : "bg-red-500"
                       }`}
                     ></div>
                     <span className="text-gray-600">
-                      Activity Level:{" "}
+                      Completion Rate:{" "}
                       <span className="font-semibold">
-                        {Number(perfInput.total_activities) >= 35
+                        {Number(perfInput.completion_velocity) >= 0.8
                           ? "High"
-                          : Number(perfInput.total_activities) >= 20
+                          : Number(perfInput.completion_velocity) >= 0.6
                             ? "Medium"
                             : "Low"}
                       </span>
@@ -600,15 +624,15 @@ export default function Analysis() {
               Your Learning Stats
             </h3>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <Activity className="w-8 h-8 text-blue-600" />
                 </div>
                 <div className="text-3xl font-bold text-gray-800 mb-1">
-                  {perfInput.total_activities}
+                  {(Number(perfInput.completion_velocity) * 100).toFixed(0)}%
                 </div>
-                <div className="text-sm text-gray-600">Total Activities</div>
+                <div className="text-sm text-gray-600">Completion Rate</div>
               </div>
 
               <div className="text-center">
@@ -626,9 +650,9 @@ export default function Analysis() {
                   <Award className="w-8 h-8 text-green-600" />
                 </div>
                 <div className="text-3xl font-bold text-gray-800 mb-1">
-                  {perfInput.consistency_score}/10
+                  {Number(perfInput.login_gap_std).toFixed(1)}
                 </div>
-                <div className="text-sm text-gray-600">Consistency</div>
+                <div className="text-sm text-gray-600">Login Gap (days)</div>
               </div>
 
               <div className="text-center">
@@ -639,6 +663,16 @@ export default function Analysis() {
                   {perfInput.total_active_days}
                 </div>
                 <div className="text-sm text-gray-600">Active Days</div>
+              </div>
+
+              <div className="text-center">
+                <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <Brain className="w-8 h-8 text-indigo-600" />
+                </div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">
+                  {(Number(perfInput.night_study_ratio) * 100).toFixed(0)}%
+                </div>
+                <div className="text-sm text-gray-600">Night Study</div>
               </div>
             </div>
           </div>
@@ -869,8 +903,8 @@ export default function Analysis() {
                     };
 
                     const categoryIcons = {
-                      Consistency: <Award className="w-5 h-5" />,
-                      Activity: <Activity className="w-5 h-5" />,
+                      "Completion Rate": <Award className="w-5 h-5" />,
+                      Consistency: <Activity className="w-5 h-5" />,
                       "Study Time": <Clock className="w-5 h-5" />,
                       Schedule: <Target className="w-5 h-5" />,
                       Persona: <Users className="w-5 h-5" />,

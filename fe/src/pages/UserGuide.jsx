@@ -47,6 +47,15 @@ export default function UserGuide() {
       color: "from-purple-500 to-pink-500",
       performanceFields: [
         {
+          name: "Completion Velocity",
+          icon: <Clock className="w-5 h-5 text-purple-600" />,
+          explanation:
+            "Kecepatan penyelesaian tugas/aktivitas belajar kamu. Nilai 0-1, di mana 1 = selalu menyelesaikan semua tugas.",
+          example:
+            "Contoh: 0.8 = kamu menyelesaikan 80% dari semua tugas yang diberikan",
+          goodRange: "Target: >0.7 (menyelesaikan sebagian besar tugas)",
+        },
+        {
           name: "Avg Minutes Per Module",
           icon: <Clock className="w-5 h-5 text-purple-600" />,
           explanation:
@@ -56,22 +65,13 @@ export default function UserGuide() {
           goodRange: "Ideal: 20-40 menit (fokus optimal tanpa burnout)",
         },
         {
-          name: "Consistency Score",
+          name: "Login Gap Std",
           icon: <Award className="w-5 h-5 text-green-600" />,
           explanation:
-            "Seberapa konsisten kamu belajar. Skala 1-10, di mana 10 adalah sangat konsisten.",
+            "Standar deviasi jarak waktu login kamu (dalam hari). Semakin rendah = semakin konsisten login.",
           example:
-            "Contoh: 7/10 = kamu belajar secara teratur dengan sedikit skip",
-          goodRange: "Target: 7-10 (belajar hampir setiap hari)",
-        },
-        {
-          name: "Total Activities",
-          icon: <Activity className="w-5 h-5 text-blue-600" />,
-          explanation:
-            "Total jumlah aktivitas belajar yang sudah kamu selesaikan (video, quiz, tugas, dll).",
-          example:
-            "Contoh: 30 activities = kamu sudah menyelesaikan 30 kegiatan belajar",
-          goodRange: "Target: >35 untuk hasil optimal",
+            "Contoh: 1.5 = kamu login dengan pola yang sangat konsisten, 5.0 = pola login tidak teratur",
+          goodRange: "Target: <2.0 (login konsisten hampir setiap hari)",
         },
         {
           name: "Weekend Ratio",
@@ -81,6 +81,14 @@ export default function UserGuide() {
           example:
             "Contoh: 0.3 = 30% aktivitas belajar kamu dilakukan di weekend",
           goodRange: "Balance: 0.2-0.4 (jangan terlalu banyak atau sedikit)",
+        },
+        {
+          name: "Night Study Ratio",
+          icon: <Activity className="w-5 h-5 text-blue-600" />,
+          explanation:
+            "Persentase aktivitas belajar yang dilakukan di malam hari (setelah jam 8 malam).",
+          example: "Contoh: 0.4 = 40% belajar kamu dilakukan di malam hari",
+          goodRange: "Optimal: 0.2-0.5 (seimbang antara siang dan malam)",
         },
         {
           name: "Study Time Category",
@@ -100,14 +108,14 @@ export default function UserGuide() {
       ],
       clusteringFields: [
         {
-          name: "Total Activities",
-          icon: <Activity className="w-5 h-5 text-blue-600" />,
+          name: "Completion Velocity",
+          icon: <Clock className="w-5 h-5 text-purple-600" />,
           explanation:
-            "Sama seperti di Performance Features. Total jumlah aktivitas belajar yang sudah diselesaikan.",
+            "Sama seperti di Performance Features. Kecepatan penyelesaian tugas/aktivitas belajar.",
           example:
-            "Contoh: 30 activities = total kegiatan belajar yang sudah kamu selesaikan",
+            "Contoh: 0.8 = menyelesaikan 80% dari semua tugas yang diberikan",
           goodRange:
-            "Clustering akan mengelompokkan: <20 (Low), 20-35 (Medium), >35 (High)",
+            "Clustering akan identifikasi: <0.5 (Slow), 0.5-0.8 (Moderate), >0.8 (Fast)",
           note: "Harus sama dengan nilai di Performance Features",
         },
         {
@@ -121,13 +129,13 @@ export default function UserGuide() {
           note: "Harus sama dengan nilai di Performance Features",
         },
         {
-          name: "Consistency Score",
+          name: "Login Gap Std",
           icon: <Award className="w-5 h-5 text-green-600" />,
           explanation:
-            "Sama seperti di Performance Features. Skor konsistensi belajar (1-10).",
-          example: "Contoh: 7/10 = belajar teratur dengan konsistensi baik",
+            "Sama seperti di Performance Features. Konsistensi pola login (semakin rendah = lebih konsisten).",
+          example: "Contoh: 1.5 = login sangat konsisten, 5.0 = tidak teratur",
           goodRange:
-            "Clustering akan kategorikan pola belajar berdasarkan konsistensi ini",
+            "Clustering akan kategorikan pola konsistensi berdasarkan nilai ini",
           note: "Harus sama dengan nilai di Performance Features",
         },
         {
@@ -138,6 +146,16 @@ export default function UserGuide() {
           example: "Contoh: 0.3 = 30% belajar di weekend, 70% di weekday",
           goodRange:
             "Clustering akan analisis pola: Weekend Warrior vs Weekday Learner",
+          note: "Harus sama dengan nilai di Performance Features",
+        },
+        {
+          name: "Night Study Ratio",
+          icon: <Activity className="w-5 h-5 text-blue-600" />,
+          explanation:
+            "Sama seperti di Performance Features. Persentase belajar di malam hari.",
+          example: "Contoh: 0.4 = 40% aktivitas belajar dilakukan malam hari",
+          goodRange:
+            "Clustering akan identifikasi: Night Owl vs Day Time Learner",
           note: "Harus sama dengan nilai di Performance Features",
         },
       ],
@@ -470,7 +488,7 @@ export default function UserGuide() {
                     PENTING: Konsistensi Data!
                   </h4>
                   <p className="text-yellow-800 text-sm mb-2">
-                    <strong>4 field di Clustering Features HARUS sama</strong>{" "}
+                    <strong>5 field di Clustering Features HARUS sama</strong>{" "}
                     dengan yang kamu isi di Performance Features. Ini karena AI
                     perlu menganalisis data yang sama dari 2 sudut pandang
                     berbeda:
@@ -533,7 +551,7 @@ export default function UserGuide() {
               </h4>
               <div className="space-y-2 text-sm text-gray-700">
                 <p>
-                  <strong>Performance Features (6 field)</strong> menggunakan
+                  <strong>Performance Features (7 field)</strong> menggunakan
                   data lebih lengkap termasuk
                   <span className="text-indigo-600 font-semibold">
                     {" "}
@@ -547,7 +565,7 @@ export default function UserGuide() {
                   untuk prediksi skor yang akurat.
                 </p>
                 <p>
-                  <strong>Clustering Features (4 field)</strong> fokus pada pola
+                  <strong>Clustering Features (5 field)</strong> fokus pada pola
                   belajar untuk kategorisasi persona. AI akan mengelompokkan
                   kamu berdasarkan{" "}
                   <span className="text-purple-600 font-semibold">

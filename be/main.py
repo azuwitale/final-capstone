@@ -11,17 +11,18 @@ from schema.user_features import (
 )
 
 # --------------------
-# UTILITY FUNCTIONS FOR DATA TRANSFORMATION
+# UTILITY FUNCTIONS BUAT DATA TRANSFORMATION
 # --------------------
 def transform_zscore_to_readable(zscore_value, feature_name):
     """
     Ubah z-score values ke value yang gampang dibaca
     """
     feature_ranges = {
-        "total_activities": {"mean": 30, "std": 10, "min": 5, "max": 60, "type": "int"},
+        "completion_velocity": {"mean": 0.75, "std": 0.2, "min": 0.1, "max": 1.0, "type": "float"},
         "avg_minutes_per_module": {"mean": 20, "std": 8, "min": 5, "max": 45, "type": "float"},
-        "consistency_score": {"mean": 6, "std": 2, "min": 1, "max": 10, "type": "float"},
-        "weekend_ratio": {"mean": 0.3, "std": 0.2, "min": 0.0, "max": 1.0, "type": "float"}
+        "login_gap_std": {"mean": 2.5, "std": 1.0, "min": 0.5, "max": 7.0, "type": "float"},
+        "weekend_ratio": {"mean": 0.3, "std": 0.2, "min": 0.0, "max": 1.0, "type": "float"},
+        "night_study_ratio": {"mean": 0.25, "std": 0.15, "min": 0.0, "max": 0.8, "type": "float"}
     }
     
     if feature_name not in feature_ranges:
@@ -42,10 +43,11 @@ def transform_readable_to_zscore(readable_value, feature_name):
     Ubah Value Dari User ke z-score buat input model
     """
     feature_ranges = {
-        "total_activities": {"mean": 30, "std": 10},
+        "completion_velocity": {"mean": 0.75, "std": 0.2},
         "avg_minutes_per_module": {"mean": 20, "std": 8},
-        "consistency_score": {"mean": 6, "std": 2},
-        "weekend_ratio": {"mean": 0.3, "std": 0.2}
+        "login_gap_std": {"mean": 2.5, "std": 1.0},
+        "weekend_ratio": {"mean": 0.3, "std": 0.2},
+        "night_study_ratio": {"mean": 0.25, "std": 0.15}
     }
     
     if feature_name not in feature_ranges:
@@ -63,7 +65,7 @@ def transform_centroid_to_readable(centroid):
     """
     Transform a full centroid (z-scores) to readable values
     """
-    feature_names = ["total_activities", "avg_minutes_per_module", "consistency_score", "weekend_ratio"]
+    feature_names = ["completion_velocity", "avg_minutes_per_module", "login_gap_std", "weekend_ratio", "night_study_ratio"]
     
     readable_centroid = {}
     for i, feature_name in enumerate(feature_names):
@@ -113,20 +115,22 @@ except Exception as e:
 
 # Buat Urutin Inputan ke performance ML model
 PERFORMANCE_ORDER = [
-    "total_activities",
+    "completion_velocity",
     "avg_minutes_per_module",
-    "consistency_score",
+    "login_gap_std",
     "weekend_ratio",
+    "night_study_ratio",
     "study_time_category",
     "total_active_days",
 ]
 
 #  Buat Urutin Inputan ke clustering model/scaler
 CLUSTER_ORDER = [
-    "total_activities",
+    "completion_velocity",
     "avg_minutes_per_module",
-    "consistency_score",
-    "weekend_ratio"
+    "login_gap_std",
+    "weekend_ratio",
+    "night_study_ratio"
 ]
 
 
@@ -139,64 +143,64 @@ def generate_recommendations(perf_dict: dict, cluster_dict: dict, perf_pred: flo
     """
     recommendations = []
     
-    # 1. Consistency-based recommendations
-    consistency = float(perf_dict.get("consistency_score", 0))
-    if consistency < 4:
+    # 1. Completion velocity recommendations
+    completion_velocity = float(perf_dict.get("completion_velocity", 0))
+    if completion_velocity < 0.5:
         recommendations.append({
-            "category": "Consistency",
+            "category": "Completion Rate",
             "priority": "high",
-            "title": "Tingkatkan Konsistensi Belajar",
-            "description": "Konsistensi belajar kamu masih rendah. Coba tetapkan jadwal belajar rutin setiap hari.",
-            "action": "Buat jadwal belajar 30 menit setiap hari pada waktu yang sama",
-            "expected_impact": "Dapat meningkatkan consistency score hingga 40%"
+            "title": "Tingkatkan Kecepatan Penyelesaian",
+            "description": "Kecepatan penyelesaian tugas masih rendah. Fokus pada efisiensi belajar.",
+            "action": "Buat target harian untuk menyelesaikan minimal 2-3 modul per hari",
+            "expected_impact": "Dapat meningkatkan completion velocity hingga 40%"
         })
-    elif consistency < 7:
+    elif completion_velocity < 0.75:
         recommendations.append({
-            "category": "Consistency",
+            "category": "Completion Rate",
             "priority": "medium",
-            "title": "Pertahankan Ritme Belajar",
-            "description": "Konsistensi kamu cukup baik, tapi masih bisa ditingkatkan.",
-            "action": "Tambahkan sesi review mingguan untuk memperkuat pemahaman",
-            "expected_impact": "Meningkatkan retensi materi hingga 25%"
+            "title": "Optimalkan Kecepatan Belajar",
+            "description": "Kecepatan penyelesaian cukup baik, tapi masih bisa ditingkatkan.",
+            "action": "Gunakan teknik time-blocking untuk fokus penuh pada setiap sesi",
+            "expected_impact": "Meningkatkan efisiensi hingga 25%"
         })
     else:
         recommendations.append({
-            "category": "Consistency",
+            "category": "Completion Rate",
             "priority": "low",
-            "title": "Konsistensi Excellent!",
-            "description": "Kamu sudah memiliki pola belajar yang sangat konsisten.",
-            "action": "Fokus pada materi yang lebih advanced untuk tantangan baru",
+            "title": "Kecepatan Penyelesaian Excellent!",
+            "description": "Kamu sangat efisien dalam menyelesaikan materi.",
+            "action": "Fokus pada materi yang lebih challenging untuk growth",
             "expected_impact": "Mempercepat progress pembelajaran 30%"
         })
     
-    # 2. Activity-based recommendations
-    total_activities = float(perf_dict.get("total_activities", 0))
-    if total_activities < 20:
+    # 2. Login gap consistency recommendations
+    login_gap_std = float(perf_dict.get("login_gap_std", 0))
+    if login_gap_std > 3:
         recommendations.append({
-            "category": "Activity",
+            "category": "Consistency",
             "priority": "high",
-            "title": "Perbanyak Latihan",
-            "description": "Jumlah aktivitas belajar kamu masih minim. Semakin banyak latihan, semakin baik pemahamanmu.",
-            "action": "Target minimal 3-5 aktivitas belajar per hari",
-            "expected_impact": "Meningkatkan pemahaman materi hingga 50%"
+            "title": "Tingkatkan Konsistensi Login",
+            "description": "Pola login kamu tidak teratur. Konsistensi adalah kunci pembelajaran efektif.",
+            "action": "Tetapkan waktu belajar rutin setiap hari pada jam yang sama",
+            "expected_impact": "Dapat meningkatkan retensi materi hingga 50%"
         })
-    elif total_activities < 35:
+    elif login_gap_std > 2:
         recommendations.append({
-            "category": "Activity",
+            "category": "Consistency",
             "priority": "medium",
-            "title": "Tingkatkan Aktivitas Belajar",
-            "description": "Kamu sudah aktif, tapi masih bisa lebih optimal.",
-            "action": "Coba tambah 2-3 aktivitas per hari dengan fokus pada area yang lemah",
-            "expected_impact": "Percepatan progress hingga 30%"
+            "title": "Stabilkan Pola Belajar",
+            "description": "Konsistensi login cukup baik, tapi masih bisa lebih stabil.",
+            "action": "Buat reminder harian dan stick to schedule",
+            "expected_impact": "Meningkatkan konsistensi hingga 30%"
         })
     else:
         recommendations.append({
-            "category": "Activity",
+            "category": "Consistency",
             "priority": "low",
-            "title": "Aktivitas Sangat Baik!",
-            "description": "Kamu sangat aktif dalam belajar.",
-            "action": "Fokus pada kualitas daripada kuantitas, pastikan setiap aktivitas bermakna",
-            "expected_impact": "Optimalisasi waktu belajar hingga 20%"
+            "title": "Konsistensi Login Sangat Baik!",
+            "description": "Pola login kamu sangat teratur dan konsisten.",
+            "action": "Pertahankan rutinitas ini dan fokus pada kualitas sesi belajar",
+            "expected_impact": "Mempertahankan momentum pembelajaran optimal"
         })
     
     # 3. Study time recommendations
@@ -259,7 +263,28 @@ def generate_recommendations(perf_dict: dict, cluster_dict: dict, perf_pred: flo
             "expected_impact": "Meningkatkan konsistensi harian 20%"
         })
     
-    # 5. Persona-specific recommendations
+    # 5. Night study recommendations
+    night_study_ratio = float(cluster_dict.get("night_study_ratio", 0))
+    if night_study_ratio > 0.5:
+        recommendations.append({
+            "category": "Schedule",
+            "priority": "medium",
+            "title": "Pertimbangkan Waktu Belajar Optimal",
+            "description": "Kamu sering belajar malam hari. Pertimbangkan waktu yang lebih optimal.",
+            "action": "Coba shift sebagian sesi ke pagi atau siang untuk energi lebih baik",
+            "expected_impact": "Meningkatkan fokus dan retensi hingga 25%"
+        })
+    elif night_study_ratio < 0.1:
+        recommendations.append({
+            "category": "Schedule",
+            "priority": "low",
+            "title": "Pola Waktu Belajar Baik",
+            "description": "Kamu belajar di waktu yang optimal untuk fokus.",
+            "action": "Pertahankan pola ini dan manfaatkan peak energy hours",
+            "expected_impact": "Mempertahankan produktivitas optimal"
+        })
+    
+    # 6. Persona-specific recommendations
     if persona == "The Consistent":
         recommendations.append({
             "category": "Persona",
@@ -288,7 +313,7 @@ def generate_recommendations(perf_dict: dict, cluster_dict: dict, perf_pred: flo
             "expected_impact": "Maksimalkan hasil belajar hingga 45%"
         })
     
-    # 6. Performance-based overall recommendation
+    # 7. Performance-based overall recommendation
     if perf_pred < 2.5:
         recommendations.append({
             "category": "Overall",
@@ -326,7 +351,7 @@ def generate_recommendations(perf_dict: dict, cluster_dict: dict, perf_pred: flo
 
 @app.get("/")
 async def root():
-    return {"message": "API OK", "status": "healthy"}
+    return {"message": "BE JALAN WOK", "status": "success"}
 
 
 # --------------------
@@ -346,18 +371,20 @@ async def get_sample_data():
         readable_centroid = transform_centroid_to_readable(centroids[0])
         
         sample_cluster = {
-            "total_activities": readable_centroid["total_activities"],
+            "completion_velocity": readable_centroid["completion_velocity"],
             "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
-            "consistency_score": readable_centroid["consistency_score"],
+            "login_gap_std": readable_centroid["login_gap_std"],
             "weekend_ratio": readable_centroid["weekend_ratio"],
+            "night_study_ratio": readable_centroid["night_study_ratio"],
         }
         
         # Sample performance data pake value yang gampang dibaca
         sample_performance = {
+            "completion_velocity": readable_centroid["completion_velocity"],
             "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
-            "consistency_score": readable_centroid["consistency_score"],
-            "total_activities": readable_centroid["total_activities"],
+            "login_gap_std": readable_centroid["login_gap_std"],
             "weekend_ratio": readable_centroid["weekend_ratio"],
+            "night_study_ratio": readable_centroid["night_study_ratio"],
             "study_time_category": 2,
             "total_active_days": 15,
         }
@@ -393,18 +420,20 @@ async def get_persona_samples():
                 "cluster_id": cluster_id,
                 "persona_label": persona_label,
                 "performance": {
+                    "completion_velocity": readable_centroid["completion_velocity"],
                     "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
-                    "consistency_score": readable_centroid["consistency_score"],
-                    "total_activities": readable_centroid["total_activities"],
+                    "login_gap_std": readable_centroid["login_gap_std"],
                     "weekend_ratio": readable_centroid["weekend_ratio"],
+                    "night_study_ratio": readable_centroid["night_study_ratio"],
                     "study_time_category": 2,
                     "total_active_days": 15,
                 },
                 "clustering": {
-                    "total_activities": readable_centroid["total_activities"],
+                    "completion_velocity": readable_centroid["completion_velocity"],
                     "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
-                    "consistency_score": readable_centroid["consistency_score"],
+                    "login_gap_std": readable_centroid["login_gap_std"],
                     "weekend_ratio": readable_centroid["weekend_ratio"],
+                    "night_study_ratio": readable_centroid["night_study_ratio"],
                 }
             }
             samples.append(sample)
@@ -560,10 +589,11 @@ async def generate_test_data():
 
         for cluster_id, centroid in enumerate(centroids):
             sample_input = {
-                "total_activities": round(centroid[0], 2),
+                "completion_velocity": round(centroid[0], 2),
                 "avg_minutes_per_module": round(centroid[1], 2),
-                "consistency_score": round(centroid[2], 2),
+                "login_gap_std": round(centroid[2], 2),
                 "weekend_ratio": round(centroid[3], 2),
+                "night_study_ratio": round(centroid[4], 2),
             }
 
             persona_samples.append({
@@ -574,10 +604,11 @@ async def generate_test_data():
 
         # SAMPLE FOR PERFORMANCE MODEL
         perf_sample = {
+            "completion_velocity": 0.75,
             "avg_minutes_per_module": 20,
-            "consistency_score": 5,
-            "total_activities": 30,
+            "login_gap_std": 2.5,
             "weekend_ratio": 0.3,
+            "night_study_ratio": 0.25,
             "study_time_category": 2,
             "total_active_days": 15,
         }
@@ -626,7 +657,7 @@ async def health_check():
 @app.get("/benchmark/stats")
 async def get_benchmark_stats():
     """
-    Get benchmark statistics across all personas for comparison
+    dapetin bencmark dari semua persona
     """
     try:
         centroids = kmeans_model.cluster_centers_
@@ -640,18 +671,20 @@ async def get_benchmark_stats():
             benchmark_data.append({
                 "cluster_id": cluster_id,
                 "persona": persona_label,
-                "avg_activities": readable_centroid["total_activities"],
+                "avg_completion_velocity": readable_centroid["completion_velocity"],
                 "avg_minutes_per_module": readable_centroid["avg_minutes_per_module"],
-                "avg_consistency": readable_centroid["consistency_score"],
-                "avg_weekend_ratio": readable_centroid["weekend_ratio"]
+                "avg_login_gap_std": readable_centroid["login_gap_std"],
+                "avg_weekend_ratio": readable_centroid["weekend_ratio"],
+                "avg_night_study_ratio": readable_centroid["night_study_ratio"]
             })
         
-        # Calculate overall averages
+        # Itung overall averages
         overall_avg = {
-            "avg_activities": round(sum([b["avg_activities"] for b in benchmark_data]) / len(benchmark_data), 2),
+            "avg_completion_velocity": round(sum([b["avg_completion_velocity"] for b in benchmark_data]) / len(benchmark_data), 2),
             "avg_minutes_per_module": round(sum([b["avg_minutes_per_module"] for b in benchmark_data]) / len(benchmark_data), 2),
-            "avg_consistency": round(sum([b["avg_consistency"] for b in benchmark_data]) / len(benchmark_data), 2),
-            "avg_weekend_ratio": round(sum([b["avg_weekend_ratio"] for b in benchmark_data]) / len(benchmark_data), 2)
+            "avg_login_gap_std": round(sum([b["avg_login_gap_std"] for b in benchmark_data]) / len(benchmark_data), 2),
+            "avg_weekend_ratio": round(sum([b["avg_weekend_ratio"] for b in benchmark_data]) / len(benchmark_data), 2),
+            "avg_night_study_ratio": round(sum([b["avg_night_study_ratio"] for b in benchmark_data]) / len(benchmark_data), 2)
         }
         
         return {
@@ -683,10 +716,11 @@ async def compare_performance(features: PerformanceFeatures):
             readable_centroids.append(readable)
 
             bench_features = {
-                "total_activities": readable["total_activities"],
+                "completion_velocity": readable["completion_velocity"],
                 "avg_minutes_per_module": readable["avg_minutes_per_module"],
-                "consistency_score": readable["consistency_score"],
+                "login_gap_std": readable["login_gap_std"],
                 "weekend_ratio": readable["weekend_ratio"],
+                "night_study_ratio": readable["night_study_ratio"],
                 "study_time_category": features.study_time_category,
                 "total_active_days": features.total_active_days
             }
@@ -711,23 +745,23 @@ async def compare_performance(features: PerformanceFeatures):
         ) * 100
 
         # DYNAMIC AVERAGES Dari (ML)
-        avg_activities = sum(c["total_activities"] for c in readable_centroids) / len(readable_centroids)
-        avg_consistency = sum(c["consistency_score"] for c in readable_centroids) / len(readable_centroids)
+        avg_completion_velocity = sum(c["completion_velocity"] for c in readable_centroids) / len(readable_centroids)
+        avg_login_gap_std = sum(c["login_gap_std"] for c in readable_centroids) / len(readable_centroids)
         avg_time = sum(c["avg_minutes_per_module"] for c in readable_centroids) / len(readable_centroids)
 
         # INSIGHTS
         comparison_insights = []
         user_data = features.dict()
 
-        if user_data["total_activities"] > avg_activities * 1.2:
-            comparison_insights.append("Kamu lebih aktif dari rata-rata learner.")
-        elif user_data["total_activities"] < avg_activities * 0.8:
-            comparison_insights.append("Tingkatkan aktivitas belajar untuk mencapai rata-rata.")
+        if user_data["completion_velocity"] > avg_completion_velocity * 1.2:
+            comparison_insights.append("Kecepatan penyelesaian kamu di atas rata-rata learner.")
+        elif user_data["completion_velocity"] < avg_completion_velocity * 0.8:
+            comparison_insights.append("Tingkatkan kecepatan penyelesaian untuk mencapai rata-rata.")
 
-        if user_data["consistency_score"] > avg_consistency * 1.2:
-            comparison_insights.append("Konsistensi belajar kamu di atas rata-rata.")
-        elif user_data["consistency_score"] < avg_consistency * 0.8:
-            comparison_insights.append("Fokus meningkatkan konsistensi belajar.")
+        if user_data["login_gap_std"] < avg_login_gap_std * 0.8:
+            comparison_insights.append("Konsistensi login kamu sangat baik, di atas rata-rata.")
+        elif user_data["login_gap_std"] > avg_login_gap_std * 1.2:
+            comparison_insights.append("Fokus meningkatkan konsistensi login harian.")
 
         if user_data["avg_minutes_per_module"] > avg_time * 1.2:
             comparison_insights.append("Durasi belajar kamu lebih mendalam dari rata-rata.")
@@ -750,3 +784,18 @@ async def compare_performance(features: PerformanceFeatures):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/debug/model-features")
+async def debug_model_features():
+    try:
+        perf_features = getattr(performance_model, 'feature_names_in_', 'Not available')
+        cluster_features = getattr(kmeans_model, 'feature_names_in_', 'Not available')
+        scaler_features = getattr(scaler, 'feature_names_in_', 'Not available')
+        
+        return {
+            "performance_model_features": perf_features.tolist() if hasattr(perf_features, 'tolist') else str(perf_features),
+            "kmeans_model_features": cluster_features.tolist() if hasattr(cluster_features, 'tolist') else str(cluster_features),
+            "scaler_features": scaler_features.tolist() if hasattr(scaler_features, 'tolist') else str(scaler_features)
+        }
+    except Exception as e:
+        return {"error tot": str(e)}
